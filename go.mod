@@ -14,6 +14,7 @@ require (
 	github.com/aws/smithy-go v1.13.5
 	github.com/form3tech-oss/jwt-go v3.2.5+incompatible
 	github.com/gabriel-vasile/mimetype v1.4.2
+	github.com/mailru/easyjson v0.7.7
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/sirupsen/logrus v1.9.0
 	github.com/snowflakedb/gosnowflake v1.7.1
@@ -42,6 +43,7 @@ require (
 	github.com/google/flatbuffers v23.1.21+incompatible // indirect
 	github.com/gsterjov/go-libsecret v0.0.0-20161001094733-a6f4afe4910c // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	github.com/josharian/intern v1.0.0 // indirect
 	github.com/klauspost/asmfmt v1.3.2 // indirect
 	github.com/klauspost/compress v1.15.15 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.3 // indirect
