@@ -5,6 +5,7 @@ package gosnowflake
 type snowflakeResult struct {
 	affectedRows int64
 	insertID     int64 // Snowflake doesn't support last insert id
+	execResp     *execResponse
 }
 
 func (res *snowflakeResult) LastInsertId() (int64, error) {

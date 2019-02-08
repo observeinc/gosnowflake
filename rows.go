@@ -37,6 +37,7 @@ type snowflakeRows struct {
 	sc              *snowflakeConn
 	RowType         []execResponseRowType
 	ChunkDownloader *snowflakeChunkDownloader
+	execResp        *execResponse
 }
 
 func (rows *snowflakeRows) Close() (err error) {

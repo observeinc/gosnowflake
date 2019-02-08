@@ -221,6 +221,7 @@ func (sc *snowflakeConn) ExecContext(ctx context.Context, query string, args []d
 		glog.V(2).Infof("number of updated rows: %#v", updatedRows)
 		return &snowflakeResult{
 			affectedRows: updatedRows,
+			execResp:     data,
 			insertID:     -1}, nil // last insert id is not supported by Snowflake
 	}
 	glog.V(2).Info("DDL")
@@ -240,6 +241,7 @@ func (sc *snowflakeConn) QueryContext(ctx context.Context, query string, args []
 	}
 
 	rows := new(snowflakeRows)
+	rows.execResp = data
 	rows.sc = sc
 	rows.RowType = data.Data.RowType
 	rows.ChunkDownloader = &snowflakeChunkDownloader{
