@@ -17,6 +17,7 @@ require (
 	github.com/aws/smithy-go v1.20.2
 	github.com/gabriel-vasile/mimetype v1.4.7
 	github.com/golang-jwt/jwt/v5 v5.2.2
+	github.com/mailru/easyjson v0.9.0
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/sirupsen/logrus v1.9.3
 	go.opentelemetry.io/otel v1.35.0
@@ -52,6 +53,7 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gsterjov/go-libsecret v0.0.0-20161001094733-a6f4afe4910c // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	github.com/josharian/intern v1.0.0 // indirect
 	github.com/klauspost/compress v1.17.11 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.9 // indirect
 	github.com/mtibben/percent v0.2.1 // indirect
