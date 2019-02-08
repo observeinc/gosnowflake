@@ -15,7 +15,6 @@
   version = "1.1"
 
 [[projects]]
-  branch = "master"
   digest = "1:6b98cc8ee2df9bbb5190f1cea00285ea625109667574d16853ba82eaf48d47fd"
   name = "github.com/golang/glog"
   packages = ["."]
@@ -24,28 +23,28 @@
   source = "https://github.com/snowflakedb/glog.git"
 
 [[projects]]
-  digest = "1:8f8811f9be822914c3a25c6a071e93beb4c805d7b026cbf298bc577bc1cc945b"
+  digest = "1:236d7e1bdb50d8f68559af37dbcf9d142d56b431c9b2176d41e2a009b664cda8"
   name = "github.com/google/uuid"
   packages = ["."]
   pruneopts = "UT"
-  revision = "064e2069ce9c359c118179501254f67d7d37ba24"
-  version = "0.2"
+  revision = "9b3b1e0f5f99ae461456d768e7d301a7acdaa2d8"
+  version = "v1.1.0"
 
 [[projects]]
   branch = "master"
-  digest = "1:7b4cd865877639770d2711dc6278b98466be7ebbe5cdf2c933659b73d6e58213"
+  digest = "1:635ac9478e783f09b2945663e359ebf74bc225b37f9845795d1b247285b458a2"
   name = "github.com/pkg/browser"
   packages = ["."]
   pruneopts = "UT"
-  revision = "c90ca0c84f15f81c982e32665bffd8d7aac8f097"
+  revision = "0a3d74bf9ce488f035cf5bc36f753a711bc74334"
 
 [[projects]]
   branch = "master"
-  digest = "1:b6b9212412c3335645f285510729b18c0cc8d06e288f956dba4ace7b3fe8ad7c"
+  digest = "1:f0abb2b9298d56ca77b7969af3ee589559e993cd03e8ecc622129f98b4462afd"
   name = "golang.org/x/crypto"
   packages = ["ocsp"]
   pruneopts = "UT"
-  revision = "91a49db82a88618983a78a06c1cbd4e00ab749ab"
+  revision = "b8fe1690c61389d7d2a8074a507d1d40c5d30448"
 
 [solve-meta]
   analyzer-name = "dep"
