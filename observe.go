@@ -2,8 +2,12 @@ package gosnowflake
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
+
+	"github.com/mailru/easyjson"
+	_ "github.com/mailru/easyjson/gen" // This is required to have go mod vendor not remove the package
 )
 
 const (
@@ -14,20 +18,16 @@ const (
 // ErrResponseTooLarge means the reponse is too large (thanks linter for these useful comments!)
 var ErrResponseTooLarge = fmt.Errorf("response is too large")
 
-type limitedJSONDecoder struct {
-	decoder *json.Decoder
-}
-
-func (d *limitedJSONDecoder) Decode(v interface{}) error {
-	err := d.decoder.Decode(v)
-	if err == io.ErrUnexpectedEOF {
+func decodeResponse(body io.ReadCloser, resp interface{}) error {
+	lr := io.LimitReader(body, ResponseBodyLimit)
+	var err error
+	if v, is := resp.(easyjson.Unmarshaler); is {
+		err = easyjson.UnmarshalFromReader(lr, v)
+	} else {
+		err = json.NewDecoder(lr).Decode(resp)
+	}
+	if errors.Is(err, io.ErrUnexpectedEOF) {
 		return ErrResponseTooLarge
 	}
 	return err
-}
-
-func newLimitedJSONDecoder(buf io.ReadCloser) *limitedJSONDecoder {
-	return &limitedJSONDecoder{
-		decoder: json.NewDecoder(io.LimitReader(buf, ResponseBodyLimit)),
-	}
 }
