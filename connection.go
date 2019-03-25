@@ -240,25 +240,32 @@ func (sc *snowflakeConn) QueryContext(ctx context.Context, query string, args []
 		return nil, err
 	}
 
+	downloadResults := true
+	if strings.HasPrefix(query, "/*NODOWNLOAD*/") {
+		downloadResults = false
+	}
+
 	rows := new(snowflakeRows)
 	rows.execResp = data
 	rows.sc = sc
 	rows.RowType = data.Data.RowType
-	rows.ChunkDownloader = &snowflakeChunkDownloader{
-		sc:                 sc,
-		ctx:                ctx,
-		CurrentChunk:       data.Data.RowSet,
-		ChunkMetas:         data.Data.Chunks,
-		Total:              int64(data.Data.Total),
-		TotalRowIndex:      int64(-1),
-		CellCount:          len(data.Data.RowType),
-		Qrmk:               data.Data.Qrmk,
-		ChunkHeader:        data.Data.ChunkHeaders,
-		FuncDownload:       downloadChunk,
-		FuncDownloadHelper: downloadChunkHelper,
-		FuncGet:            getChunk,
+	if downloadResults {
+		rows.ChunkDownloader = &snowflakeChunkDownloader{
+			sc:                 sc,
+			ctx:                ctx,
+			CurrentChunk:       data.Data.RowSet,
+			ChunkMetas:         data.Data.Chunks,
+			Total:              int64(data.Data.Total),
+			TotalRowIndex:      int64(-1),
+			CellCount:          len(data.Data.RowType),
+			Qrmk:               data.Data.Qrmk,
+			ChunkHeader:        data.Data.ChunkHeaders,
+			FuncDownload:       downloadChunk,
+			FuncDownloadHelper: downloadChunkHelper,
+			FuncGet:            getChunk,
+		}
+		rows.ChunkDownloader.start()
 	}
-	rows.ChunkDownloader.start()
 	return rows, err
 }
 
