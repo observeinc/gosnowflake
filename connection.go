@@ -14,6 +14,7 @@ import (
 	"net/url"
 	"regexp"
 	"strconv"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -436,22 +437,30 @@ func (sc *snowflakeConn) queryContextInternal(
 		return data.Data.AsyncRows, nil
 	}
 
+	downloadResults := true
+	if strings.HasPrefix(query, "/*NODOWNLOAD*/") {
+		downloadResults = false
+	}
+
 	rows := new(snowflakeRows)
 	rows.sc = sc
 	rows.queryID = data.Data.QueryID
 	rows.ctx = ctx
 	rows.format = resultFormat(data.Data.QueryResultFormat)
 
-	if isMultiStmt(&data.Data) {
-		// handleMultiQuery is responsible to fill rows with childResults
-		if err = sc.handleMultiQuery(ctx, data.Data, rows); err != nil {
-			return nil, err
+	if downloadResults {
+		if isMultiStmt(&data.Data) {
+			// handleMultiQuery is responsible to fill rows with childResults
+			if err = sc.handleMultiQuery(ctx, data.Data, rows); err != nil {
+				return nil, err
+			}
+		} else {
+			rows.addDownloader(populateChunkDownloader(ctx, sc, data.Data))
 		}
-	} else {
-		rows.addDownloader(populateChunkDownloader(ctx, sc, data.Data))
+
+		err = rows.ChunkDownloader.start()
 	}
 
-	err = rows.ChunkDownloader.start()
 	return rows, err
 }
 
