@@ -13,6 +13,7 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"testing"
 	"time"
@@ -121,10 +122,9 @@ func TestUnitIsInValidityRange(t *testing.T) {
 
 func TestUnitEncodeCertIDGood(t *testing.T) {
 	targetURLs := []string{
-		"testaccount.snowflakecomputing.com:443",
+		"faketestaccount.snowflakecomputing.com:443",
 		"s3-us-west-2.amazonaws.com:443",
-		// This fails with a timeout in getCert attempting to handshake
-		// "sfcdev1.blob.core.windows.net:443",
+		"sfcdev1.blob.core.windows.net:443",
 	}
 	for _, tt := range targetURLs {
 		chainedCerts := getCert(tt)
@@ -302,6 +302,10 @@ func getCert(addr string) []*x509.Certificate {
 
 func TestOCSPRetry(t *testing.T) {
 	certs := getCert("s3-us-west-2.amazonaws.com:443")
+	dummyOCSPHost := &url.URL{
+		Scheme: "https",
+		Host:   "dummyOCSPHost",
+	}
 	client := &fakeHTTPClient{
 		cnt:     3,
 		success: true,
@@ -309,8 +313,8 @@ func TestOCSPRetry(t *testing.T) {
 	}
 	res, b, st := retryOCSP(
 		client, fakeRequestFunc,
-		"dummyOCSPHost",
-		make(map[string]string), []byte{0}, certs[len(certs)-1], 20*time.Second, 10*time.Second)
+		dummyOCSPHost,
+		make(map[string]string), []byte{0}, certs[len(certs)-1], 10*time.Second)
 	if st.err == nil {
 		fmt.Printf("should fail: %v, %v, %v\n", res, b, st)
 	}
@@ -321,21 +325,25 @@ func TestOCSPRetry(t *testing.T) {
 	}
 	res, b, st = retryOCSP(
 		client, fakeRequestFunc,
-		"dummyOCSPHost",
-		make(map[string]string), []byte{0}, certs[len(certs)-1], 10*time.Second, 5*time.Second)
+		dummyOCSPHost,
+		make(map[string]string), []byte{0}, certs[len(certs)-1], 5*time.Second)
 	if st.err == nil {
 		fmt.Printf("should fail: %v, %v, %v\n", res, b, st)
 	}
 }
 
 func TestOCSPCacheServerRetry(t *testing.T) {
+	dummyOCSPHost := &url.URL{
+		Scheme: "https",
+		Host:   "dummyOCSPHost",
+	}
 	client := &fakeHTTPClient{
 		cnt:     3,
 		success: true,
 		body:    []byte{1, 2, 3},
 	}
-	res, st := retryOCSPCacheServer(
-		client, fakeRequestFunc, "dummyOCSPHost", 20*time.Second, 10*time.Second)
+	res, st := checkOCSPCacheServer(
+		client, fakeRequestFunc, dummyOCSPHost, 20*time.Second)
 	if st.err == nil {
 		t.Errorf("should fail: %v", res)
 	}
@@ -344,8 +352,8 @@ func TestOCSPCacheServerRetry(t *testing.T) {
 		success: true,
 		body:    []byte{1, 2, 3},
 	}
-	res, st = retryOCSPCacheServer(
-		client, fakeRequestFunc, "dummyOCSPHost", 10*time.Second, 5*time.Second)
+	res, st = checkOCSPCacheServer(
+		client, fakeRequestFunc, dummyOCSPHost, 10*time.Second)
 	if st.err == nil {
 		t.Errorf("should fail: %v", res)
 	}
