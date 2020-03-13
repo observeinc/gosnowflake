@@ -40,7 +40,7 @@ type SnowflakeRows interface {
 
 type snowflakeRows struct {
 	sc                  *snowflakeConn
-	ChunkDownloader     chunkDownloader
+	ChunkDownloader     chunkDownloader `json:"-"`
 	tailChunkDownloader chunkDownloader
 	queryID             string
 	status              QueryStatus
