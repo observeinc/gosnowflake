@@ -103,6 +103,22 @@ func (sc *snowflakeConn) exec(
 	var data *execResponse
 
 	requestID := uuid.New()
+	const (
+		prefix = "/*REQUESTID:"
+		suffix = "*/"
+	)
+	prefixSplit := strings.Split(query, prefix)
+	if len(prefixSplit) > 1 {
+		suffixSplit := strings.Split(prefixSplit[1], suffix)
+		if len(suffixSplit) > 1 {
+			id, err := uuid.Parse(suffixSplit[0])
+			if err == nil {
+				requestID = id
+				panic(requestID)
+			}
+		}
+	}
+
 	data, err = sc.rest.FuncPostQuery(ctx, sc.rest, &url.Values{}, headers, jsonBody, sc.rest.RequestTimeout, &requestID)
 	if err != nil {
 		return nil, err
