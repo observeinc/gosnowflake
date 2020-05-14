@@ -31,7 +31,7 @@ const (
 
 type snowflakeConn struct {
 	cfg             *Config
-	rest            *snowflakeRestful
+	rest            *SnowflakeRestful
 	SequenceCounter uint64
 	QueryID         string
 	SQLState        string

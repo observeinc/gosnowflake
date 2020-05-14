@@ -15,7 +15,7 @@ import (
 )
 
 func TestUnitPostAuth(t *testing.T) {
-	sr := &snowflakeRestful{
+	sr := &SnowflakeRestful{
 		Token:    "token",
 		FuncPost: postTestAfterRenew,
 	}
@@ -46,25 +46,25 @@ func TestUnitPostAuth(t *testing.T) {
 	}
 }
 
-func postAuthFailServiceIssue(_ *snowflakeRestful, _ *url.Values, _ map[string]string, _ []byte, _ time.Duration) (*authResponse, error) {
+func postAuthFailServiceIssue(_ *SnowflakeRestful, _ *url.Values, _ map[string]string, _ []byte, _ time.Duration) (*authResponse, error) {
 	return nil, &SnowflakeError{
 		Number: ErrCodeServiceUnavailable,
 	}
 }
 
-func postAuthFailWrongAccount(_ *snowflakeRestful, _ *url.Values, _ map[string]string, _ []byte, _ time.Duration) (*authResponse, error) {
+func postAuthFailWrongAccount(_ *SnowflakeRestful, _ *url.Values, _ map[string]string, _ []byte, _ time.Duration) (*authResponse, error) {
 	return nil, &SnowflakeError{
 		Number: ErrCodeFailedToConnect,
 	}
 }
 
-func postAuthFailUnknown(_ *snowflakeRestful, _ *url.Values, _ map[string]string, _ []byte, _ time.Duration) (*authResponse, error) {
+func postAuthFailUnknown(_ *SnowflakeRestful, _ *url.Values, _ map[string]string, _ []byte, _ time.Duration) (*authResponse, error) {
 	return nil, &SnowflakeError{
 		Number: ErrFailedToAuth,
 	}
 }
 
-func postAuthSuccessWithErrorCode(_ *snowflakeRestful, _ *url.Values, _ map[string]string, _ []byte, _ time.Duration) (*authResponse, error) {
+func postAuthSuccessWithErrorCode(_ *SnowflakeRestful, _ *url.Values, _ map[string]string, _ []byte, _ time.Duration) (*authResponse, error) {
 	return &authResponse{
 		Success: false,
 		Code:    "98765",
@@ -72,7 +72,7 @@ func postAuthSuccessWithErrorCode(_ *snowflakeRestful, _ *url.Values, _ map[stri
 	}, nil
 }
 
-func postAuthSuccessWithInvalidErrorCode(_ *snowflakeRestful, _ *url.Values, _ map[string]string, _ []byte, _ time.Duration) (*authResponse, error) {
+func postAuthSuccessWithInvalidErrorCode(_ *SnowflakeRestful, _ *url.Values, _ map[string]string, _ []byte, _ time.Duration) (*authResponse, error) {
 	return &authResponse{
 		Success: false,
 		Code:    "abcdef",
@@ -80,7 +80,7 @@ func postAuthSuccessWithInvalidErrorCode(_ *snowflakeRestful, _ *url.Values, _ m
 	}, nil
 }
 
-func postAuthSuccess(_ *snowflakeRestful, _ *url.Values, _ map[string]string, _ []byte, _ time.Duration) (*authResponse, error) {
+func postAuthSuccess(_ *SnowflakeRestful, _ *url.Values, _ map[string]string, _ []byte, _ time.Duration) (*authResponse, error) {
 	return &authResponse{
 		Success: true,
 		Data: authResponseMain{
@@ -93,7 +93,7 @@ func postAuthSuccess(_ *snowflakeRestful, _ *url.Values, _ map[string]string, _ 
 	}, nil
 }
 
-func postAuthCheckSAMLResponse(_ *snowflakeRestful, _ *url.Values, _ map[string]string, jsonBody []byte, _ time.Duration) (*authResponse, error) {
+func postAuthCheckSAMLResponse(_ *SnowflakeRestful, _ *url.Values, _ map[string]string, jsonBody []byte, _ time.Duration) (*authResponse, error) {
 	var ar authRequest
 	if err := json.Unmarshal(jsonBody, &ar); err != nil {
 		return nil, err
@@ -116,7 +116,7 @@ func postAuthCheckSAMLResponse(_ *snowflakeRestful, _ *url.Values, _ map[string]
 // Checks that the request body generated when authenticating with OAuth
 // contains all the necessary values.
 func postAuthCheckOAuth(
-	_ *snowflakeRestful,
+	_ *SnowflakeRestful,
 	_ *url.Values, _ map[string]string,
 	jsonBody []byte,
 	_ time.Duration) (*authResponse, error) {
@@ -145,7 +145,7 @@ func postAuthCheckOAuth(
 	}, nil
 }
 
-func postAuthCheckPasscode(_ *snowflakeRestful, _ *url.Values, _ map[string]string, jsonBody []byte, _ time.Duration) (*authResponse, error) {
+func postAuthCheckPasscode(_ *SnowflakeRestful, _ *url.Values, _ map[string]string, jsonBody []byte, _ time.Duration) (*authResponse, error) {
 	var ar authRequest
 	if err := json.Unmarshal(jsonBody, &ar); err != nil {
 		return nil, err
@@ -165,7 +165,7 @@ func postAuthCheckPasscode(_ *snowflakeRestful, _ *url.Values, _ map[string]stri
 	}, nil
 }
 
-func postAuthCheckPasscodeInPassword(_ *snowflakeRestful, _ *url.Values, _ map[string]string, jsonBody []byte, _ time.Duration) (*authResponse, error) {
+func postAuthCheckPasscodeInPassword(_ *SnowflakeRestful, _ *url.Values, _ map[string]string, jsonBody []byte, _ time.Duration) (*authResponse, error) {
 	var ar authRequest
 	if err := json.Unmarshal(jsonBody, &ar); err != nil {
 		return nil, err
@@ -187,7 +187,7 @@ func postAuthCheckPasscodeInPassword(_ *snowflakeRestful, _ *url.Values, _ map[s
 
 // JWT token validate callback function to check the JWT token
 // It uses the public key paired with the testPrivKey
-func postAuthCheckJWTToken(_ *snowflakeRestful, _ *url.Values, _ map[string]string, jsonBody []byte, _ time.Duration) (*authResponse, error) {
+func postAuthCheckJWTToken(_ *SnowflakeRestful, _ *url.Values, _ map[string]string, jsonBody []byte, _ time.Duration) (*authResponse, error) {
 	var ar authRequest
 	if err := json.Unmarshal(jsonBody, &ar); err != nil {
 		return nil, err
@@ -238,7 +238,7 @@ func getDefaultSnowflakeConn() *snowflakeConn {
 		Passcode:           "",
 		Application:        "testapp",
 	}
-	sr := &snowflakeRestful{}
+	sr := &SnowflakeRestful{}
 	sc := &snowflakeConn{
 		rest: sr,
 		cfg:  &cfg,
@@ -252,7 +252,7 @@ func TestUnitAuthenticate(t *testing.T) {
 	var ok bool
 
 	sc := getDefaultSnowflakeConn()
-	sr := &snowflakeRestful{
+	sr := &SnowflakeRestful{
 		FuncPostAuth: postAuthFailServiceIssue,
 	}
 	sc.rest = sr
@@ -310,7 +310,7 @@ func TestUnitAuthenticate(t *testing.T) {
 
 func TestUnitAuthenticateSaml(t *testing.T) {
 	var err error
-	sr := &snowflakeRestful{
+	sr := &SnowflakeRestful{
 		FuncPostAuth: postAuthCheckSAMLResponse,
 	}
 	sc := getDefaultSnowflakeConn()
@@ -329,7 +329,7 @@ func TestUnitAuthenticateSaml(t *testing.T) {
 // Unit test for OAuth.
 func TestUnitAuthenticateOAuth(t *testing.T) {
 	var err error
-	sr := &snowflakeRestful{
+	sr := &SnowflakeRestful{
 		FuncPostAuth: postAuthCheckOAuth,
 	}
 	sc := getDefaultSnowflakeConn()
@@ -344,7 +344,7 @@ func TestUnitAuthenticateOAuth(t *testing.T) {
 
 func TestUnitAuthenticatePasscode(t *testing.T) {
 	var err error
-	sr := &snowflakeRestful{
+	sr := &SnowflakeRestful{
 		FuncPostAuth: postAuthCheckPasscode,
 	}
 	sc := getDefaultSnowflakeConn()
@@ -368,7 +368,7 @@ func TestUnitAuthenticatePasscode(t *testing.T) {
 func TestUnitAuthenticateJWT(t *testing.T) {
 	var err error
 
-	sr := &snowflakeRestful{
+	sr := &SnowflakeRestful{
 		FuncPostAuth: postAuthCheckJWTToken,
 	}
 	sc := getDefaultSnowflakeConn()

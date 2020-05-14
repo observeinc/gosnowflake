@@ -51,7 +51,7 @@ Explanation:
 	another SP.
 */
 func authenticateBySAML(
-	sr *snowflakeRestful,
+	sr *SnowflakeRestful,
 	oktaURL *url.URL,
 	application string,
 	account string,
@@ -199,7 +199,7 @@ func isPrefixEqual(u1 *url.URL, u2 *url.URL) bool {
 // Makes a request to /session/authenticator-request to get SAML Information,
 // such as the IDP Url and Proof Key, depending on the authenticator
 func postAuthSAML(
-	sr *snowflakeRestful,
+	sr *SnowflakeRestful,
 	headers map[string]string,
 	body []byte,
 	timeout time.Duration) (
@@ -260,7 +260,7 @@ func postAuthSAML(
 }
 
 func postAuthOKTA(
-	sr *snowflakeRestful,
+	sr *SnowflakeRestful,
 	headers map[string]string,
 	body []byte,
 	fullURL string,
@@ -305,7 +305,7 @@ func postAuthOKTA(
 }
 
 func getSSO(
-	sr *snowflakeRestful,
+	sr *SnowflakeRestful,
 	params *url.Values,
 	headers map[string]string,
 	ssoURL string,

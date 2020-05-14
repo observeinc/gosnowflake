@@ -14,7 +14,7 @@ const serviceNameAppend = "a"
 // postQueryMock would generate a response based on the X-Snowflake-Service header, to generate a response
 // with the SERVICE_NAME field appending a character at the end of the header
 // This way it could test both the send and receive logic
-func postQueryMock(_ context.Context, _ *snowflakeRestful, _ *url.Values, headers map[string]string, _ []byte, _ time.Duration, _ *uuid.UUID) (*execResponse, error) {
+func postQueryMock(_ context.Context, _ *SnowflakeRestful, _ *url.Values, headers map[string]string, _ []byte, _ time.Duration, _ *uuid.UUID) (*execResponse, error) {
 	var serviceName string
 	if serviceHeader, ok := headers["X-Snowflake-Service"]; ok {
 		serviceName = serviceHeader + serviceNameAppend
@@ -38,7 +38,7 @@ func postQueryMock(_ context.Context, _ *snowflakeRestful, _ *url.Values, header
 // 2. SERVICE_NAME would be update by response payload
 // It is achieved through an interactive postQueryMock that would generate response based on header
 func TestServiceName(t *testing.T) {
-	sr := &snowflakeRestful{
+	sr := &SnowflakeRestful{
 		FuncPostQuery: postQueryMock,
 	}
 
@@ -62,14 +62,14 @@ func TestServiceName(t *testing.T) {
 	}
 }
 
-func closeSessionMock(_ *snowflakeRestful) error {
+func closeSessionMock(_ *SnowflakeRestful) error {
 	return &SnowflakeError{
 		Number: ErrSessionGone,
 	}
 }
 
 func TestCloseIgnoreSessionGone(t *testing.T) {
-	sr := &snowflakeRestful{
+	sr := &SnowflakeRestful{
 		FuncCloseSession: closeSessionMock,
 	}
 	sc := &snowflakeConn{

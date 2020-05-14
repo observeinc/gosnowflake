@@ -38,7 +38,7 @@ func (sr *snowflakeResult) SetExecResponse(er *ExecResponse) {
 
 func NewSnowflakeRowsDownloader(ctx context.Context, rowType []ExecResponseRowType, rowSet [][]*string, totalRowCount int64, chunkMetas []ExecResponseChunk, chunkHeaders map[string]string) *SnowflakeRows {
 	sc := &snowflakeConn{ // fake connection just to provide a .rest
-		rest: &snowflakeRestful{
+		rest: &SnowflakeRestful{
 			RequestTimeout: defaultRequestTimeout,
 			Client:         &http.Client{},
 		},

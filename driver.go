@@ -34,7 +34,7 @@ func (d SnowflakeDriver) Open(dsn string) (driver.Conn, error) {
 		ocspResponseCacheLock.Unlock()
 	}
 	// authenticate
-	sc.rest = &snowflakeRestful{
+	sc.rest = &SnowflakeRestful{
 		Host:     sc.cfg.Host,
 		Port:     sc.cfg.Port,
 		Protocol: sc.cfg.Protocol,
