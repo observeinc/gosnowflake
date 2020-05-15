@@ -37,21 +37,21 @@ func TestUnitPostBackURL(t *testing.T) {
 	}
 }
 
-func getTestError(_ context.Context, _ *SnowflakeRestful, _ *url.URL, _ map[string]string, _ time.Duration) (*http.Response, error) {
+func getTestError(_ context.Context, _ *snowflakeRestful, _ *url.URL, _ map[string]string, _ time.Duration) (*http.Response, error) {
 	return &http.Response{
 		StatusCode: http.StatusOK,
 		Body:       &fakeResponseBody{body: []byte{0x12, 0x34}},
 	}, errors.New("failed to run post method")
 }
 
-func getTestAppBadGatewayError(_ context.Context, _ *SnowflakeRestful, _ *url.URL, _ map[string]string, _ time.Duration) (*http.Response, error) {
+func getTestAppBadGatewayError(_ context.Context, _ *snowflakeRestful, _ *url.URL, _ map[string]string, _ time.Duration) (*http.Response, error) {
 	return &http.Response{
 		StatusCode: http.StatusBadGateway,
 		Body:       &fakeResponseBody{body: []byte{0x12, 0x34}},
 	}, nil
 }
 
-func getTestHTMLSuccess(_ context.Context, _ *SnowflakeRestful, _ *url.URL, _ map[string]string, _ time.Duration) (*http.Response, error) {
+func getTestHTMLSuccess(_ context.Context, _ *snowflakeRestful, _ *url.URL, _ map[string]string, _ time.Duration) (*http.Response, error) {
 	return &http.Response{
 		StatusCode: http.StatusOK,
 		Body:       &fakeResponseBody{body: []byte("<htm></html>")},
@@ -59,7 +59,7 @@ func getTestHTMLSuccess(_ context.Context, _ *SnowflakeRestful, _ *url.URL, _ ma
 }
 
 func TestUnitPostAuthSAML(t *testing.T) {
-	sr := &SnowflakeRestful{
+	sr := &snowflakeRestful{
 		FuncPost: postTestError,
 	}
 	var err error
@@ -80,7 +80,7 @@ func TestUnitPostAuthSAML(t *testing.T) {
 }
 
 func TestUnitPostAuthOKTA(t *testing.T) {
-	sr := &SnowflakeRestful{
+	sr := &snowflakeRestful{
 		FuncPost: postTestError,
 	}
 	var err error
@@ -101,7 +101,7 @@ func TestUnitPostAuthOKTA(t *testing.T) {
 }
 
 func TestUnitGetSSO(t *testing.T) {
-	sr := &SnowflakeRestful{
+	sr := &snowflakeRestful{
 		FuncGet: getTestError,
 	}
 	var err error
@@ -121,18 +121,18 @@ func TestUnitGetSSO(t *testing.T) {
 	}
 }
 
-func postAuthSAMLError(_ *SnowflakeRestful, _ map[string]string, _ []byte, _ time.Duration) (*authResponse, error) {
+func postAuthSAMLError(_ *snowflakeRestful, _ map[string]string, _ []byte, _ time.Duration) (*authResponse, error) {
 	return &authResponse{}, errors.New("failed to get SAML response")
 }
 
-func postAuthSAMLAuthFail(_ *SnowflakeRestful, _ map[string]string, _ []byte, _ time.Duration) (*authResponse, error) {
+func postAuthSAMLAuthFail(_ *snowflakeRestful, _ map[string]string, _ []byte, _ time.Duration) (*authResponse, error) {
 	return &authResponse{
 		Success: false,
 		Message: "SAML auth failed",
 	}, nil
 }
 
-func postAuthSAMLAuthSuccessButInvalidURL(_ *SnowflakeRestful, _ map[string]string, _ []byte, _ time.Duration) (*authResponse, error) {
+func postAuthSAMLAuthSuccessButInvalidURL(_ *snowflakeRestful, _ map[string]string, _ []byte, _ time.Duration) (*authResponse, error) {
 	return &authResponse{
 		Success: true,
 		Message: "",
@@ -143,7 +143,7 @@ func postAuthSAMLAuthSuccessButInvalidURL(_ *SnowflakeRestful, _ map[string]stri
 	}, nil
 }
 
-func postAuthSAMLAuthSuccess(_ *SnowflakeRestful, _ map[string]string, _ []byte, _ time.Duration) (*authResponse, error) {
+func postAuthSAMLAuthSuccess(_ *snowflakeRestful, _ map[string]string, _ []byte, _ time.Duration) (*authResponse, error) {
 	return &authResponse{
 		Success: true,
 		Message: "",
@@ -154,23 +154,23 @@ func postAuthSAMLAuthSuccess(_ *SnowflakeRestful, _ map[string]string, _ []byte,
 	}, nil
 }
 
-func postAuthOKTAError(_ *SnowflakeRestful, _ map[string]string, _ []byte, _ string, _ time.Duration) (*authOKTAResponse, error) {
+func postAuthOKTAError(_ *snowflakeRestful, _ map[string]string, _ []byte, _ string, _ time.Duration) (*authOKTAResponse, error) {
 	return &authOKTAResponse{}, errors.New("failed to get SAML response")
 }
 
-func postAuthOKTASuccess(_ *SnowflakeRestful, _ map[string]string, _ []byte, _ string, _ time.Duration) (*authOKTAResponse, error) {
+func postAuthOKTASuccess(_ *snowflakeRestful, _ map[string]string, _ []byte, _ string, _ time.Duration) (*authOKTAResponse, error) {
 	return &authOKTAResponse{}, nil
 }
 
-func getSSOError(_ *SnowflakeRestful, _ *url.Values, _ map[string]string, _ string, _ time.Duration) ([]byte, error) {
+func getSSOError(_ *snowflakeRestful, _ *url.Values, _ map[string]string, _ string, _ time.Duration) ([]byte, error) {
 	return []byte{}, errors.New("failed to get SSO html")
 }
 
-func getSSOSuccessButInvalidURL(_ *SnowflakeRestful, _ *url.Values, _ map[string]string, _ string, _ time.Duration) ([]byte, error) {
+func getSSOSuccessButInvalidURL(_ *snowflakeRestful, _ *url.Values, _ map[string]string, _ string, _ time.Duration) ([]byte, error) {
 	return []byte(`<html><form id="1"/></html>`), nil
 }
 
-func getSSOSuccess(_ *SnowflakeRestful, _ *url.Values, _ map[string]string, _ string, _ time.Duration) ([]byte, error) {
+func getSSOSuccess(_ *snowflakeRestful, _ *url.Values, _ map[string]string, _ string, _ time.Duration) ([]byte, error) {
 	return []byte(`<html><form id="1" action="https&#x3a;&#x2f;&#x2f;abc.com&#x2f;"></form></html>`), nil
 }
 
@@ -183,7 +183,7 @@ func TestUnitAuthenticateBySAML(t *testing.T) {
 	account := "testaccount"
 	user := "u"
 	password := "p"
-	sr := &SnowflakeRestful{
+	sr := &snowflakeRestful{
 		Protocol:         "https",
 		Host:             "abc.com",
 		Port:             443,

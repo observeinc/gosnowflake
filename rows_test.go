@@ -309,7 +309,7 @@ func TestDownloadChunkInvalidResponseBody(t *testing.T) {
 	}
 	scd := &snowflakeChunkDownloader{
 		sc: &snowflakeConn{
-			rest: &SnowflakeRestful{RequestTimeout: defaultRequestTimeout},
+			rest: &snowflakeRestful{RequestTimeout: defaultRequestTimeout},
 		},
 		ctx:                context.Background(),
 		ChunkMetas:         cm,
@@ -351,7 +351,7 @@ func TestDownloadChunkErrorStatus(t *testing.T) {
 	}
 	scd := &snowflakeChunkDownloader{
 		sc: &snowflakeConn{
-			rest: &SnowflakeRestful{RequestTimeout: defaultRequestTimeout},
+			rest: &snowflakeRestful{RequestTimeout: defaultRequestTimeout},
 		},
 		ctx:                context.Background(),
 		ChunkMetas:         cm,

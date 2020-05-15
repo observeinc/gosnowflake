@@ -31,7 +31,7 @@ const (
 
 type snowflakeConn struct {
 	cfg             *Config
-	rest            *SnowflakeRestful
+	rest            *snowflakeRestful
 	SequenceCounter uint64
 	QueryID         string
 	SQLState        string
@@ -114,7 +114,6 @@ func (sc *snowflakeConn) exec(
 			id, err := uuid.Parse(suffixSplit[0])
 			if err == nil {
 				requestID = id
-				panic(requestID)
 			}
 		}
 	}

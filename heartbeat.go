@@ -20,7 +20,7 @@ const (
 )
 
 type heartbeat struct {
-	restful      *SnowflakeRestful
+	restful      *snowflakeRestful
 	shutdownChan chan bool
 }
 

@@ -81,7 +81,7 @@ func openBrowser(idpURL string) error {
 // Note: FuncPostAuthSaml will return a fully qualified error if
 // there is something wrong getting data from Snowflake.
 func getIdpURLProofKey(
-	sr *SnowflakeRestful,
+	sr *snowflakeRestful,
 	authenticator string,
 	application string,
 	account string,
@@ -162,7 +162,7 @@ func getTokenFromResponse(response string) (string, error) {
 // - Snowflake directs the user back to the driver
 // - authenticate is complete!
 func authenticateByExternalBrowser(
-	sr *SnowflakeRestful,
+	sr *snowflakeRestful,
 	authenticator string,
 	application string,
 	account string,

@@ -13,6 +13,7 @@ type ExecResponseRowType = execResponseRowType
 type ExecResponseChunk = execResponseChunk
 type SnowflakeRows = snowflakeRows
 type SnowflakeChunkDownloader = snowflakeChunkDownloader
+type SnowflakeRestful = snowflakeRestful
 
 // Methods
 
@@ -38,7 +39,7 @@ func (sr *snowflakeResult) SetExecResponse(er *ExecResponse) {
 
 func NewSnowflakeRowsDownloader(ctx context.Context, rowType []ExecResponseRowType, rowSet [][]*string, totalRowCount int64, chunkMetas []ExecResponseChunk, chunkHeaders map[string]string) *SnowflakeRows {
 	sc := &snowflakeConn{ // fake connection just to provide a .rest
-		rest: &SnowflakeRestful{
+		rest: &snowflakeRestful{
 			RequestTimeout: defaultRequestTimeout,
 			Client:         &http.Client{},
 		},

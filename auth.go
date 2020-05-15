@@ -188,7 +188,7 @@ type authResponse struct {
 }
 
 func postAuth(
-	sr *SnowflakeRestful,
+	sr *snowflakeRestful,
 	params *url.Values,
 	headers map[string]string,
 	body []byte,
