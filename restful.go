@@ -185,7 +185,7 @@ func postRestfulQueryHelper(
 	if resp.StatusCode == http.StatusOK {
 		glog.V(2).Infof("postQuery: resp: %v", resp)
 		var respd execResponse
-		err = newLimitedJsonDecoder(resp.Body).Decode(&respd)
+		err = decodeResponse(resp.Body, &respd)
 		if err != nil {
 			glog.V(1).Infof("failed to decode JSON. err: %v", err)
 			glog.Flush()
@@ -220,7 +220,7 @@ func postRestfulQueryHelper(
 				return nil, err
 			}
 			respd = execResponse{} // reset the response
-			err = newLimitedJsonDecoder(resp.Body).Decode(&respd)
+			err = decodeResponse(resp.Body, &respd)
 			resp.Body.Close()
 			if err != nil {
 				glog.V(1).Infof("failed to decode JSON. err: %v", err)
@@ -276,7 +276,7 @@ func closeSession(sr *snowflakeRestful) error {
 	defer resp.Body.Close()
 	if resp.StatusCode == http.StatusOK {
 		var respd renewSessionResponse
-		err = newLimitedJsonDecoder(resp.Body).Decode(&respd)
+		err = decodeResponse(resp.Body, &respd)
 		if err != nil {
 			glog.V(1).Infof("failed to decode JSON. err: %v", err)
 			glog.Flush()
@@ -341,7 +341,7 @@ func renewRestfulSession(ctx context.Context, sr *snowflakeRestful) error {
 	defer resp.Body.Close()
 	if resp.StatusCode == http.StatusOK {
 		var respd renewSessionResponse
-		err = newLimitedJsonDecoder(resp.Body).Decode(&respd)
+		err = decodeResponse(resp.Body, &respd)
 		if err != nil {
 			glog.V(1).Infof("failed to decode JSON. err: %v", err)
 			glog.Flush()
@@ -407,7 +407,7 @@ func cancelQuery(sr *snowflakeRestful, requestID *uuid.UUID) error {
 	defer resp.Body.Close()
 	if resp.StatusCode == http.StatusOK {
 		var respd cancelQueryResponse
-		err = newLimitedJsonDecoder(resp.Body).Decode(&respd)
+		err = decodeResponse(resp.Body, &respd)
 		if err != nil {
 			glog.V(1).Infof("failed to decode JSON. err: %v", err)
 			glog.Flush()

@@ -26,6 +26,27 @@
   version = "v1.1.0"
 
 [[projects]]
+  digest = "1:e0b019ee3a64ce51eeb7e0097a372305ac8caf338e50adf8e4bf3b7ce928e132"
+  name = "github.com/josharian/intern"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "8e6ff32b3e7c0b018c43953085fe2ac330fe9acd"
+  version = "v1.0.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:04de52588628c22d00fbe2006c8642365d3f2ec48c4852fbea95a1bb3795991d"
+  name = "github.com/mailru/easyjson"
+  packages = [
+    ".",
+    "buffer",
+    "jlexer",
+    "jwriter",
+  ]
+  pruneopts = "UT"
+  revision = "0d574ab354cd22dbdd807aadc26f8afe489bb35a"
+
+[[projects]]
   branch = "master"
   digest = "1:635ac9478e783f09b2945663e359ebf74bc225b37f9845795d1b247285b458a2"
   name = "github.com/pkg/browser"
@@ -48,6 +69,9 @@
     "github.com/dgrijalva/jwt-go",
     "github.com/golang/glog",
     "github.com/google/uuid",
+    "github.com/mailru/easyjson",
+    "github.com/mailru/easyjson/jlexer",
+    "github.com/mailru/easyjson/jwriter",
     "github.com/pkg/browser",
     "golang.org/x/crypto/ocsp",
   ]

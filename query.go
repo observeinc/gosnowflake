@@ -64,8 +64,9 @@ type execResponseData struct {
 	QueryAbortTimeout time.Duration `json:"queryAbortsAfterSecs,omitempty"`
 }
 
+//easyjson:json
 type execResponse struct {
-	Data    execResponseData `json:"Data"`
+	Data    execResponseData `json:"data"`
 	Message string           `json:"message"`
 	Code    string           `json:"code"`
 	Success bool             `json:"success"`
