@@ -155,7 +155,7 @@ func easyjson90b16446DecodeGosnowflake1(in *jlexer.Lexer, out *execResponseData)
 				in.Delim('[')
 				if out.RowType == nil {
 					if !in.IsDelim(']') {
-						out.RowType = make([]execResponseRowType, 0, 0)
+						out.RowType = make([]execResponseRowType, 0)
 					} else {
 						out.RowType = []execResponseRowType{}
 					}
@@ -284,8 +284,7 @@ func easyjson90b16446DecodeGosnowflake1(in *jlexer.Lexer, out *execResponseData)
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
-					var v6 string
-					v6 = string(in.String())
+					var v6 string = string(in.String())
 					(out.ChunkHeaders)[key] = v6
 					in.WantComma()
 				}
