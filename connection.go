@@ -251,6 +251,7 @@ func (sc *snowflakeConn) ExecContext(ctx context.Context, query string, args []d
 		glog.V(2).Infof("number of updated rows: %#v", updatedRows)
 		return &snowflakeResult{
 			affectedRows: updatedRows,
+			execResp:     data,
 			insertID:     -1}, nil // last insert id is not supported by Snowflake
 	} else if sc.isMultiStmt(data.Data) {
 		childResults := getChildResults(data.Data.ResultIDs, data.Data.ResultTypes)
@@ -271,7 +272,8 @@ func (sc *snowflakeConn) ExecContext(ctx context.Context, query string, args []d
 		glog.V(2).Infof("number of updated rows: %#v", updatedRows)
 		return &snowflakeResult{
 			affectedRows: updatedRows,
-			insertID:     -1}, nil
+			execResp:     data,
+			insertID:     -1}, nil // last insert id is not supported by Snowflake
 	}
 	glog.V(2).Info("DDL")
 	return driver.ResultNoRows, nil
@@ -298,53 +300,36 @@ func (sc *snowflakeConn) QueryContext(ctx context.Context, query string, args []
 	rows.execResp = data
 	rows.sc = sc
 	rows.RowType = data.Data.RowType
+
 	if downloadResults {
-		rows.ChunkDownloader = &snowflakeChunkDownloader{
-			sc:                 sc,
-			ctx:                ctx,
-			CurrentChunk:       make([]chunkRowType, len(data.Data.RowSet)),
-			ChunkMetas:         data.Data.Chunks,
-			Total:              data.Data.Total,
-			TotalRowIndex:      int64(-1),
-			CellCount:          len(data.Data.RowType),
-			Qrmk:               data.Data.Qrmk,
-			QueryResultFormat:  data.Data.QueryResultFormat,
-			ChunkHeader:        data.Data.ChunkHeaders,
-			FuncDownload:       downloadChunk,
-			FuncDownloadHelper: downloadChunkHelper,
-			FuncGet:            getChunk,
-			RowSet: rowSetType{RowType: data.Data.RowType,
-				JSON:         data.Data.RowSet,
-				RowSetBase64: data.Data.RowSetBase64,
-			},
+		rows.ChunkDownloader = populateChunkDownloader(ctx, sc, data.Data)
+
+		if sc.isMultiStmt(data.Data) {
+			childResults := getChildResults(data.Data.ResultIDs, data.Data.ResultTypes)
+			var nextChunkDownloader *snowflakeChunkDownloader
+			firstResultSet := false
+
+			for _, child := range childResults {
+				resultPath := fmt.Sprintf("/queries/%s/result", child.id)
+				childData, err := sc.getQueryResult(ctx, resultPath)
+				if err != nil {
+					return nil, err
+				}
+				if !firstResultSet {
+					// populate rows.ChunkDownloader with the first child
+					rows.ChunkDownloader = populateChunkDownloader(ctx, sc, childData.Data)
+					nextChunkDownloader = rows.ChunkDownloader
+					firstResultSet = true
+				} else {
+					nextChunkDownloader.NextDownloader = populateChunkDownloader(ctx, sc, childData.Data)
+					nextChunkDownloader = nextChunkDownloader.NextDownloader
+				}
+			}
 		}
+
 		rows.ChunkDownloader.start()
 	}
 
-	if sc.isMultiStmt(data.Data) {
-		childResults := getChildResults(data.Data.ResultIDs, data.Data.ResultTypes)
-		var nextChunkDownloader *snowflakeChunkDownloader
-		firstResultSet := false
-
-		for _, child := range childResults {
-			resultPath := fmt.Sprintf("/queries/%s/result", child.id)
-			childData, err := sc.getQueryResult(ctx, resultPath)
-			if err != nil {
-				return nil, err
-			}
-			if !firstResultSet {
-				// populate rows.ChunkDownloader with the first child
-				rows.ChunkDownloader = populateChunkDownloader(ctx, sc, childData.Data)
-				nextChunkDownloader = rows.ChunkDownloader
-				firstResultSet = true
-			} else {
-				nextChunkDownloader.NextDownloader = populateChunkDownloader(ctx, sc, childData.Data)
-				nextChunkDownloader = nextChunkDownloader.NextDownloader
-			}
-		}
-	}
-
-	rows.ChunkDownloader.start()
 	return rows, err
 }
 
