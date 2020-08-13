@@ -8,6 +8,7 @@ import (
 
 	"github.com/mailru/easyjson"
 	_ "github.com/mailru/easyjson/gen" // This is required to have go mod vendor not remove the package
+	"github.com/mailru/easyjson/jlexer"
 )
 
 const (
@@ -26,7 +27,10 @@ func decodeResponse(body io.ReadCloser, resp interface{}) error {
 	} else {
 		err = json.NewDecoder(lr).Decode(resp)
 	}
-	if errors.Is(err, io.ErrUnexpectedEOF) {
+	var lexerErr *jlexer.LexerError
+	if err != nil &&
+		(errors.Is(err, io.ErrUnexpectedEOF) ||
+			(errors.As(err, &lexerErr) && (lr.(*io.LimitedReader).N <= 0))) {
 		return ErrResponseTooLarge
 	}
 	return err
