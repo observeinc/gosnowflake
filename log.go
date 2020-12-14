@@ -141,7 +141,9 @@ func CreateDefaultLogger() SFLogger {
 	formatter.CallerPrettyfier = SFCallerPrettyfier
 	rLogger.SetFormatter(formatter)
 	rLogger.SetReportCaller(true)
+
 	var ret = defaultLogger{inner: rLogger, enabled: true}
+	ret.SetLogLevel("warning")
 	return &ret //(&ret).(*SFLogger)
 }
 
