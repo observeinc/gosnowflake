@@ -326,11 +326,11 @@ func TestBindingInterface(t *testing.T) {
 			assertNilF(t, rows.Close())
 		}()
 		if !rows.Next() {
-			dbt.Error("failed to query")
+			dbt.Fatal("failed to query")
 		}
 		var v1, v2, v2a, v3, v4, v5, v6 any
 		if err := rows.Scan(&v1, &v2, &v2a, &v3, &v4, &v5, &v6); err != nil {
-			dbt.Errorf("failed to scan: %#v", err)
+			dbt.Fatalf("failed to scan: %#v", err)
 		}
 		if s1, ok := v1.(*big.Float); !ok || s1.Cmp(big.NewFloat(1.0)) != 0 {
 			dbt.Fatalf("failed to fetch. ok: %v, value: %v", ok, v1)
@@ -357,11 +357,11 @@ func TestBindingInterfaceString(t *testing.T) {
 			assertNilF(t, rows.Close())
 		}()
 		if !rows.Next() {
-			dbt.Error("failed to query")
+			dbt.Fatal("failed to query")
 		}
 		var v1, v2, v2a, v3, v4, v5, v6 any
 		if err := rows.Scan(&v1, &v2, &v2a, &v3, &v4, &v5, &v6); err != nil {
-			dbt.Errorf("failed to scan: %#v", err)
+			dbt.Fatalf("failed to scan: %#v", err)
 		}
 		if s, ok := v1.(string); !ok {
 			dbt.Error("failed to convert to string")
