@@ -229,7 +229,7 @@ func easyjson90b16446DecodeGithubComObserveincGosnowflakeV21(in *jlexer.Lexer, o
 				}
 				in.Delim(']')
 			}
-		case "rowsetbase64":
+		case "rowsetBase64":
 			if in.IsNull() {
 				in.Skip()
 			} else {
@@ -633,7 +633,7 @@ func easyjson90b16446EncodeGithubComObserveincGosnowflakeV21(out *jwriter.Writer
 		}
 	}
 	if in.RowSetBase64 != "" {
-		const prefix string = ",\"rowsetbase64\":"
+		const prefix string = ",\"rowsetBase64\":"
 		if first {
 			first = false
 			out.RawString(prefix[1:])
