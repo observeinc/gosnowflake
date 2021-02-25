@@ -303,6 +303,7 @@ func (sc *snowflakeConn) ExecContext(ctx context.Context, query string, args []d
 		logger.WithContext(ctx).Debugf("number of updated rows: %#v", updatedRows)
 		return &snowflakeResult{
 			affectedRows: updatedRows,
+			execResp:     data,
 			insertID:     -1,
 			queryID:      sc.QueryID,
 		}, nil // last insert id is not supported by Snowflake
@@ -366,21 +367,30 @@ func (sc *snowflakeConn) queryContextInternal(ctx context.Context, query string,
 		return data.Data.AsyncRows, nil
 	}
 
-	rows := new(snowflakeRows)
-	rows.sc = sc
-	rows.queryID = sc.QueryID
-
-	if sc.isMultiStmt(&data.Data) {
-		// handleMultiQuery is responsible to fill rows with childResults
-		err := sc.handleMultiQuery(ctx, data.Data, rows)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		rows.addDownloader(populateChunkDownloader(ctx, sc, data.Data))
+	downloadResults := true
+	if strings.HasPrefix(query, "/*NODOWNLOAD*/") {
+		downloadResults = false
 	}
 
-	rows.ChunkDownloader.start()
+	rows := new(snowflakeRows)
+	rows.execResp = data
+	rows.sc = sc
+	rows.RowType = data.Data.RowType
+	rows.queryID = sc.QueryID
+
+	if downloadResults {
+		if sc.isMultiStmt(&data.Data) {
+			// handleMultiQuery is responsible to fill rows with childResults
+			err := sc.handleMultiQuery(ctx, data.Data, rows)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			rows.addDownloader(populateChunkDownloader(ctx, sc, data.Data))
+		}
+		rows.ChunkDownloader.start()
+	}
+
 	return rows, err
 }
 

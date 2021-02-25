@@ -421,6 +421,7 @@ func fillMissingConfigParameters(cfg *Config) error {
 			MessageArgs: []interface{}{cfg.Host},
 		}
 	}
+
 	return nil
 }
 
