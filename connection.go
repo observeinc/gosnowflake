@@ -375,7 +375,6 @@ func (sc *snowflakeConn) queryContextInternal(ctx context.Context, query string,
 	rows := new(snowflakeRows)
 	rows.execResp = data
 	rows.sc = sc
-	rows.RowType = data.Data.RowType
 	rows.queryID = sc.QueryID
 
 	if downloadResults {

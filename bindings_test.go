@@ -40,7 +40,7 @@ func TestBindingFloat64(t *testing.T) {
 					dbt.Errorf("%s: %g != %g", v, expected, out)
 				}
 			} else {
-				dbt.Fatalf("%s: no data", v)
+				dbt.Errorf("%s: no data", v)
 			}
 			dbt.mustExec("DROP TABLE IF EXISTS test")
 		}
@@ -90,10 +90,10 @@ func TestBindingDateTimeTimestamp(t *testing.T) {
 		var ntz, vltz, dt, tm time.Time
 		columnTypes, err := rows.ColumnTypes()
 		if err != nil {
-			dbt.Fatalf("column type error. err: %v", err)
+			dbt.Errorf("column type error. err: %v", err)
 		}
 		if columnTypes[0].Name() != "NTZ" {
-			dbt.Fatalf("expected column name: %v, got: %v", "TEST", columnTypes[0])
+			dbt.Errorf("expected column name: %v, got: %v", "TEST", columnTypes[0])
 		}
 		canNull := dbt.mustNullable(columnTypes[0])
 		if !canNull {
@@ -106,10 +106,10 @@ func TestBindingDateTimeTimestamp(t *testing.T) {
 		dbt.mustFailLength(columnTypes[0])
 		cols, err := rows.Columns()
 		if err != nil {
-			dbt.Fatalf("failed to get columns. err: %v", err)
+			dbt.Errorf("failed to get columns. err: %v", err)
 		}
 		if len(cols) != 4 || cols[0] != "NTZ" || cols[1] != "LTZ" || cols[2] != "DT" || cols[3] != "TM" {
-			dbt.Fatalf("failed to get columns. got: %v", cols)
+			dbt.Errorf("failed to get columns. got: %v", cols)
 		}
 		if rows.Next() {
 			rows.Scan(&ntz, &vltz, &dt, &tm)
@@ -130,7 +130,7 @@ func TestBindingDateTimeTimestamp(t *testing.T) {
 					expected.UnixNano(), expected, tm.UnixNano(), tm)
 			}
 		} else {
-			dbt.Fatal("no data")
+			dbt.Error("no data")
 		}
 		dbt.mustExec("DROP TABLE tztest")
 	})
@@ -148,13 +148,13 @@ func TestBindingBinary(t *testing.T) {
 		if rows.Next() {
 			var rb []byte
 			if err := rows.Scan(&rb); err != nil {
-				dbt.Fatalf("failed to scan data. err: %v", err)
+				dbt.Errorf("failed to scan data. err: %v", err)
 			}
 			if !bytes.Equal(b, rb) {
 				dbt.Errorf("failed to match data. expected: %v, got: %v", b, rb)
 			}
 		} else {
-			dbt.Fatalf("no data")
+			dbt.Errorf("no data")
 		}
 		dbt.mustExec("DROP TABLE bintest")
 	})
@@ -184,7 +184,7 @@ func TestBindingTimestampTZ(t *testing.T) {
 			}
 			// fmt.Printf("returned value: %v, %v, %v\n", v, v.UnixNano(), expected.UnixNano())
 		} else {
-			dbt.Fatal("no data")
+			dbt.Error("no data")
 		}
 		dbt.mustExec("DROP TABLE tztest")
 	})

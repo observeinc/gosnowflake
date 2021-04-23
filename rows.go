@@ -29,7 +29,6 @@ var (
 
 type snowflakeRows struct {
 	sc                  *snowflakeConn
-	RowType             []execResponseRowType
 	ChunkDownloader     chunkDownloader `json:"-"`
 	execResp            *execResponse
 	tailChunkDownloader chunkDownloader

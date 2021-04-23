@@ -98,7 +98,7 @@ func TestGetQueryResultUsesTokenFromTokenAccessor(t *testing.T) {
 		}, nil
 	}
 	sr := &snowflakeRestful{
-		FuncGet: funcGetMock,
+		FuncGet:       funcGetMock,
 		TokenAccessor: ta,
 	}
 	sc := &snowflakeConn{

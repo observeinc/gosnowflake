@@ -6,7 +6,6 @@ import (
 	"io"
 	"path"
 	"runtime"
-
 	"time"
 
 	rlog "github.com/sirupsen/logrus"
@@ -60,6 +59,7 @@ func CreateDefaultLogger() SFLogger {
 	var formatter = rlog.TextFormatter{CallerPrettyfier: SFCallerPrettyfier}
 	rLogger.SetReportCaller(true)
 	rLogger.SetFormatter(&formatter)
+
 	var ret = defaultLogger{inner: rLogger}
 	ret.SetLogLevel("warning")
 	return &ret //(&ret).(*SFLogger)

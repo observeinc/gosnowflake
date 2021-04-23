@@ -7,7 +7,6 @@ type ExecResponse = execResponse
 type ExecResponseRowType = execResponseRowType
 type ExecResponseChunk = execResponseChunk
 type SnowflakeRows = snowflakeRows
-type SnowflakeChunkDownloader = snowflakeChunkDownloader
 type SnowflakeRestful = snowflakeRestful
 type SnowflakeValue = snowflakeValue
 type ChunkRowType = chunkRowType
@@ -25,7 +24,6 @@ func (sr *snowflakeResult) GetExecResponse() *ExecResponse {
 }
 
 // Setter methods for unit testing
-
 func (sr *snowflakeRows) SetExecResponse(er *ExecResponse) {
 	sr.execResp = er
 }
