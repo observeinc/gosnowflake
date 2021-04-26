@@ -1,4 +1,4 @@
-module github.com/snowflakedb/gosnowflake
+module github.com/observeinc/gosnowflake
 
 go 1.23.0
 
@@ -20,6 +20,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/sirupsen/logrus v1.9.3
+	github.com/snowflakedb/gosnowflake v1.17.1
 	go.opentelemetry.io/otel v1.37.0
 	go.opentelemetry.io/otel/sdk v1.35.0
 	golang.org/x/crypto v0.41.0
