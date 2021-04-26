@@ -13,8 +13,7 @@ import (
 	"github.com/apache/arrow/go/v16/arrow"
 	"github.com/apache/arrow/go/v16/arrow/array"
 	"github.com/apache/arrow/go/v16/arrow/memory"
-
-	sf "github.com/snowflakedb/gosnowflake"
+	sf "github.com/observeinc/gosnowflake"
 )
 
 type sampleRecord struct {
