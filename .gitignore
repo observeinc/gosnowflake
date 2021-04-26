@@ -16,5 +16,6 @@ whitesource/
 cp.out
 __debug_bin*
 
+.vscode
 # exclude vendor
 vendor
