@@ -6,9 +6,10 @@ import (
 	"database/sql/driver"
 	"errors"
 	"flag"
-	sf "github.com/snowflakedb/gosnowflake"
 	"io"
 	"log"
+
+	sf "github.com/observeinc/gosnowflake"
 )
 
 func main() {
