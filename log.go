@@ -37,7 +37,7 @@ func RegisterLogContextHook(contextKey string, ctxExtractor ClientLogContextHook
 
 // LogKeys registers string-typed context keys to be written to the logs when
 // logger.WithContext is used
-var LogKeys = [...]contextKey{SFSessionIDKey, SFSessionUserKey}
+var LogKeys = [...]contextKey{SFSessionIDKey, SFSessionUserKey, snowflakeRequestIDKey}
 
 // SFLogger Snowflake logger interface to expose FieldLogger defined in logrus
 type SFLogger interface {
