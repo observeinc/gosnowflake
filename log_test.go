@@ -163,6 +163,7 @@ func TestLogWithError(t *testing.T) {
 	logger := CreateDefaultLogger()
 	buf := &bytes.Buffer{}
 	logger.SetOutput(buf)
+	logger.SetLogLevel("info") // Observe overrides default logging level to warn
 
 	err := errors.New("error")
 	logger.WithError(err).Info("hello world")
@@ -192,6 +193,7 @@ func TestLogWithField(t *testing.T) {
 	logger := CreateDefaultLogger()
 	buf := &bytes.Buffer{}
 	logger.SetOutput(buf)
+	logger.SetLogLevel("info") // Observe overrides default logging level to warn
 
 	logger.WithField("field", "test").Info("hello")
 	var strbuf = buf.String()
