@@ -358,6 +358,8 @@ func easyjson90b16446DecodeGithubComObserveincGosnowflake1(in *jlexer.Lexer, out
 			out.Threshold = int64(in.Int64())
 		case "autoCompress":
 			out.AutoCompress = bool(in.Bool())
+		case "overwrite":
+			out.Overwrite = bool(in.Bool())
 		case "sourceCompression":
 			out.SourceCompression = string(in.String())
 		case "clientShowEncryptionParameter":
@@ -397,6 +399,10 @@ func easyjson90b16446DecodeGithubComObserveincGosnowflake1(in *jlexer.Lexer, out
 			out.Kind = string(in.String())
 		case "operation":
 			out.Operation = string(in.String())
+		case "queryContext":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.QueryContext).UnmarshalJSON(data))
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -811,6 +817,16 @@ func easyjson90b16446EncodeGithubComObserveincGosnowflake1(out *jwriter.Writer, 
 		}
 		out.Bool(bool(in.AutoCompress))
 	}
+	if in.Overwrite {
+		const prefix string = ",\"overwrite\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.Overwrite))
+	}
 	if in.SourceCompression != "" {
 		const prefix string = ",\"sourceCompression\":"
 		if first {
@@ -899,6 +915,16 @@ func easyjson90b16446EncodeGithubComObserveincGosnowflake1(out *jwriter.Writer, 
 			out.RawString(prefix)
 		}
 		out.String(string(in.Operation))
+	}
+	if len(in.QueryContext) != 0 {
+		const prefix string = ",\"queryContext\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Raw((in.QueryContext).MarshalJSON())
 	}
 	out.RawByte('}')
 }
