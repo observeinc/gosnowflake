@@ -12,8 +12,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.14.4
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.45.1
 	github.com/aws/smithy-go v1.17.0
-	github.com/form3tech-oss/jwt-go v3.2.5+incompatible
 	github.com/gabriel-vasile/mimetype v1.4.2
+	github.com/golang-jwt/jwt/v5 v5.2.0
 	github.com/mailru/easyjson v0.7.7
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/sirupsen/logrus v1.9.0
