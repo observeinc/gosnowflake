@@ -1,7 +1,7 @@
 #!/bin/sh
 context=$1
 if [ -z "$context" ]; then
-    context="k8s.observe-eng.com"
+    context="eng-eks"
 fi
 echo -n '{"testconnection":{'
 for E in SNOWFLAKE_TEST_ACCOUNT SNOWFLAKE_TEST_DATABASE SNOWFLAKE_TEST_WAREHOUSE SNOWFLAKE_TEST_USER SNOWFLAKE_TEST_ROLE SNOWFLAKE_TEST_PASSWORD; do
