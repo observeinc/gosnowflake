@@ -56,6 +56,12 @@ func (sr *snowflakeResult) SetExecResponse(er *ExecResponse) {
 }
 
 // StringToValue exports stringToValue
-func StringToValue(ctx context.Context, dest *driver.Value, srcColumnMeta execResponseRowType, srcValue *string, loc *time.Location, params map[string]*string) error {
-	return stringToValue(context.Background(), dest, srcColumnMeta, srcValue, loc, params)
+// Backwards compatible version. Deprecated.
+func StringToValue(dest *driver.Value, srcColumnMeta execResponseRowType, srcValue *string, loc *time.Location) error {
+	return stringToValue(context.Background(), dest, srcColumnMeta, srcValue, loc, nil)
+}
+
+// StringToValueCtx exports stringToValue
+func StringToValueCtx(ctx context.Context, dest *driver.Value, srcColumnMeta execResponseRowType, srcValue *string, loc *time.Location, params map[string]*string) error {
+	return stringToValue(ctx, dest, srcColumnMeta, srcValue, loc, params)
 }
