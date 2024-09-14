@@ -752,7 +752,7 @@ func testBindingArray(t *testing.T, bulk bool) {
 		defer dbt.mustExec(deleteTableSQL)
 		if bulk {
 			if _, err := dbt.exec("ALTER SESSION SET CLIENT_STAGE_ARRAY_BINDING_THRESHOLD = 1"); err != nil {
-				t.Error(err)
+				t.Skip("CLIENT_STAGE_ARRAY_BINDING_THRESHOLD is not available in this environment")
 			}
 		}
 
@@ -1465,7 +1465,9 @@ func testLOBRetrieval(t *testing.T, useArrowFormat bool) {
 func TestMaxLobSize(t *testing.T) {
 	skipMaxLobSizeTestOnGithubActions(t)
 	runDBTest(t, func(dbt *DBTest) {
-		dbt.mustExec(enableFeatureMaxLOBSize)
+		if _, err := dbt.exec(enableFeatureMaxLOBSize); err != nil {
+			t.Skip("FEATURE_INCREASED_MAX_LOB_SIZE_IN_MEMORY is not available on this environment")
+		}
 		defer dbt.mustExec(unsetLargeVarcharAndBinary)
 		t.Run("Max Lob Size disabled", func(t *testing.T) {
 			dbt.mustExec(disableLargeVarcharAndBinary)
@@ -1534,7 +1536,9 @@ func testInsertLOBData(t *testing.T, useArrowFormat bool, isLiteral bool) {
 		var c2 string
 		var c3 int
 
-		dbt.mustExec(enableFeatureMaxLOBSize)
+		if _, err := dbt.exec(enableFeatureMaxLOBSize); err != nil {
+			t.Skip("FEATURE_INCREASED_MAX_LOB_SIZE_IN_MEMORY is not available on this environment")
+		}
 		if useArrowFormat {
 			dbt.mustExec(forceARROW)
 		} else {
