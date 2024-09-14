@@ -7,6 +7,7 @@ import (
 	"crypto/rsa"
 	"database/sql"
 	"database/sql/driver"
+	"encoding/base64"
 	"flag"
 	"fmt"
 	"net/http"
@@ -77,10 +78,28 @@ func init() {
 	createDSN("UTC")
 }
 
+func dsnInjectJwtAuthentication(parameters *url.Values) {
+	privKeyPath := os.Getenv("SNOWFLAKE_TEST_JWT_PRIVATE_KEY")
+	if privKeyPath == "" {
+		return
+	}
+
+	data, err := os.ReadFile(privKeyPath)
+	if err != nil {
+		panic(fmt.Sprintf("failed to read private key file %v: %v", privKeyPath, err))
+	}
+
+	parameters.Add("authenticator", AuthTypeJwt.String())
+	parameters.Add("privateKey", base64.URLEncoding.EncodeToString(data))
+}
+
 func createDSN(timezone string) {
 	dsn = fmt.Sprintf("%s:%s@%s/%s/%s", username, pass, host, dbname, schemaname)
 
 	parameters := url.Values{}
+
+	dsnInjectJwtAuthentication(&parameters)
+
 	parameters.Add("timezone", timezone)
 	if protocol != "" {
 		parameters.Add("protocol", protocol)
