@@ -2034,7 +2034,10 @@ func TestUrlDecodeIfNeededE2E(t *testing.T) {
 		Protocol: os.Getenv("SNOWFLAKE_TEST_PROTOCOL"),
 		User:     os.Getenv("SNOWFLAKE_TEST_USER"),
 		Password: os.Getenv("SNOWFLAKE_TEST_PASSWORD"),
-		Params:   map[string]*string{"$" + customVarName: &customVarValue, "query_tag": &myQueryTag},
+		Params: map[string]*string{
+			"$" + customVarName: &customVarValue,
+			"query_tag":         &myQueryTag,
+		},
 	}
 	mydsn, err := DSN(cfg)
 	assertNilE(t, err, "TestUrlDecodeIfNeededE2E failed to create DSN from Config")
