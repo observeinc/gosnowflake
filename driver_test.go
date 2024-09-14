@@ -6,6 +6,7 @@ import (
 	"crypto/rsa"
 	"database/sql"
 	"database/sql/driver"
+	"encoding/base64"
 	"flag"
 	"fmt"
 	"net/http"
@@ -78,10 +79,30 @@ func init() {
 	debugMode, _ = strconv.ParseBool(os.Getenv("SNOWFLAKE_TEST_DEBUG"))
 }
 
+// Func added in observe fork
+// Injects the private key + authenticator into the DSN's parameters
+func observeDsnInjectJwtAuthentication(parameters *url.Values) {
+	privKeyPath := os.Getenv("SNOWFLAKE_TEST_JWT_PRIVATE_KEY")
+	if privKeyPath == "" {
+		return
+	}
+
+	data, err := os.ReadFile(privKeyPath)
+	if err != nil {
+		panic(fmt.Sprintf("failed to read private key file %v: %v", privKeyPath, err))
+	}
+
+	parameters.Add("authenticator", AuthTypeJwt.String())
+	parameters.Add("privateKey", base64.URLEncoding.EncodeToString(data))
+}
+
 func createDSN(timezone string) {
 	dsn = fmt.Sprintf("%s:%s@%s/%s/%s", username, pass, host, dbname, schemaname)
 
 	parameters := url.Values{}
+
+	observeDsnInjectJwtAuthentication(&parameters)
+
 	parameters.Add("timezone", timezone)
 	if protocol != "" {
 		parameters.Add("protocol", protocol)
@@ -352,31 +373,43 @@ func (dbt *DBTest) mustPrepare(query string) (stmt *sql.Stmt) {
 }
 
 func (dbt *DBTest) forceJSON() {
-	dbt.mustExec(forceJSON)
+	if _, err := dbt.exec(forceJSON); err != nil {
+		dbt.Skip("GO_QUERY_RESULT_FORMAT = JSON is not supported in this environment")
+	}
 }
 
 func (dbt *DBTest) forceArrow() {
-	dbt.mustExec(forceARROW)
-	dbt.mustExec("alter session set ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = false")
-	dbt.mustExec("alter session set FORCE_ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = false")
+	if _, err := dbt.exec(forceARROW); err != nil {
+		dbt.Skip("GO_QUERY_RESULT_FORMAT = ARROW is not supported in this environment")
+	}
+	if _, err := dbt.exec("alter session set ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = false"); err != nil {
+		dbt.Skip("ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = false is not supported in this environment")
+	}
+	if _, err := dbt.exec("alter session set FORCE_ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = false"); err != nil {
+		dbt.Skip("FORCE_ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = false is not supported in this environment")
+	}
 }
 
 func (dbt *DBTest) forceNativeArrow() { // structured types
-	dbt.mustExec(forceARROW)
-	dbt.mustExec("alter session set ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = true")
-	dbt.mustExec("alter session set FORCE_ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = true")
+	if _, err := dbt.exec(forceARROW); err != nil {
+		dbt.Skip("GO_QUERY_RESULT_FORMAT = ARROW is not supported in this environment")
+	}
+	if _, err := dbt.exec("alter session set ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = true"); err != nil {
+		dbt.Skip("ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = true is not supported in this environment")
+	}
+	if _, err := dbt.exec("alter session set FORCE_ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = true"); err != nil {
+		dbt.Skip("FORCE_ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = true is not supported in this environment")
+	}
 }
 
 func (dbt *DBTest) enableStructuredTypes() {
-	_, err := dbt.exec("alter session set ENABLE_STRUCTURED_TYPES_IN_CLIENT_RESPONSE = true")
-	if err != nil {
-		dbt.Log(err)
+	if _, err := dbt.exec("alter session set ENABLE_STRUCTURED_TYPES_IN_CLIENT_RESPONSE = true"); err != nil {
+		dbt.Skip("ENABLE_STRUCTURED_TYPES_IN_CLIENT_RESPONSE = true is not supported in this environment")
 	}
-	_, err = dbt.exec("alter session set IGNORE_CLIENT_VESRION_IN_STRUCTURED_TYPES_RESPONSE = true")
-	if err != nil {
-		dbt.Log(err)
+	if _, err := dbt.exec("alter session set IGNORE_CLIENT_VESRION_IN_STRUCTURED_TYPES_RESPONSE = true"); err != nil {
+		dbt.Skip("IGNORE_CLIENT_VESRION_IN_STRUCTURED_TYPES_RESPONSE = true is not supported in this environment")
 	}
-	_, err = dbt.exec("alter session set ENABLE_STRUCTURED_TYPES_IN_FDN_TABLES = true")
+	_, err := dbt.exec("alter session set ENABLE_STRUCTURED_TYPES_IN_FDN_TABLES = true")
 	if err != nil {
 		dbt.Log(err)
 	}
@@ -384,13 +417,11 @@ func (dbt *DBTest) enableStructuredTypes() {
 
 func (dbt *DBTest) enableStructuredTypesBinding() {
 	dbt.enableStructuredTypes()
-	_, err := dbt.exec("ALTER SESSION SET ENABLE_OBJECT_TYPED_BINDS = true")
-	if err != nil {
-		dbt.Log(err)
+	if _, err := dbt.exec("ALTER SESSION SET ENABLE_OBJECT_TYPED_BINDS = true"); err != nil {
+		dbt.Skip("ENABLE_OBJECT_TYPED_BINDS = true is not supported in this environment")
 	}
-	_, err = dbt.exec("ALTER SESSION SET ENABLE_STRUCTURED_TYPES_IN_BINDS = Enable")
-	if err != nil {
-		dbt.Log(err)
+	if _, err := dbt.exec("ALTER SESSION SET ENABLE_STRUCTURED_TYPES_IN_BINDS = Enable"); err != nil {
+		dbt.Skip("ENABLE_STRUCTURED_TYPES_IN_BINDS = Enable is not supported in this environment")
 	}
 }
 
@@ -1868,6 +1899,7 @@ func TestValidateDatabaseParameter(t *testing.T) {
 		t.Run(dsn, func(t *testing.T) {
 			newDSN := tc.dsn
 			parameters := url.Values{}
+			observeDsnInjectJwtAuthentication(&parameters)
 			if protocol != "" {
 				parameters.Add("protocol", protocol)
 			}
@@ -1899,6 +1931,7 @@ func TestValidateDatabaseParameter(t *testing.T) {
 func TestSpecifyWarehouseDatabase(t *testing.T) {
 	dsn := fmt.Sprintf("%s:%s@%s/%s", username, pass, host, dbname)
 	parameters := url.Values{}
+	observeDsnInjectJwtAuthentication(&parameters)
 	parameters.Add("account", account)
 	parameters.Add("warehouse", warehouse)
 	// parameters.Add("role", "nopublic") TODO: create nopublic role for test
@@ -2049,6 +2082,7 @@ func createDSNWithClientSessionKeepAlive() {
 	dsn = fmt.Sprintf("%s:%s@%s/%s/%s", username, pass, host, dbname, schemaname)
 
 	parameters := url.Values{}
+	observeDsnInjectJwtAuthentication(&parameters)
 	parameters.Add("client_session_keep_alive", "true")
 	if protocol != "" {
 		parameters.Add("protocol", protocol)

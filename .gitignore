@@ -3,6 +3,7 @@
 .vscode/
 parameters*.json
 parameters*.bat
+*.pem
 *.p8
 coverage.txt
 fuzz-*/
