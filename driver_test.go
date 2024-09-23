@@ -1643,6 +1643,7 @@ func TestValidateDatabaseParameter(t *testing.T) {
 func TestSpecifyWarehouseDatabase(t *testing.T) {
 	dsn := fmt.Sprintf("%s:%s@%s/%s", username, pass, host, dbname)
 	parameters := url.Values{}
+	dsnInjectJwtAuthentication(&parameters)
 	parameters.Add("account", account)
 	parameters.Add("warehouse", warehouse)
 	// parameters.Add("role", "nopublic") TODO: create nopublic role for test
@@ -1786,6 +1787,7 @@ func createDSNWithClientSessionKeepAlive() {
 	dsn = fmt.Sprintf("%s:%s@%s/%s/%s", username, pass, host, dbname, schemaname)
 
 	parameters := url.Values{}
+	dsnInjectJwtAuthentication(&parameters)
 	parameters.Add("client_session_keep_alive", "true")
 	if protocol != "" {
 		parameters.Add("protocol", protocol)
