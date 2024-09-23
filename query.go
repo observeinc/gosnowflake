@@ -46,6 +46,7 @@ type contextData struct {
 	Base64Data string `json:"base64Data,omitempty"`
 }
 
+//easyjson:json
 type execResponseRowType struct {
 	Name       string `json:"name"`
 	ByteLength int64  `json:"byteLength"`
