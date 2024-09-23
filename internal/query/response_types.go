@@ -1,6 +1,8 @@
 package query
 
 // ExecResponseRowType describes column metadata from a query response.
+//
+//easyjson:json
 type ExecResponseRowType struct {
 	Name       string          `json:"name"`
 	Fields     []FieldMetadata `json:"fields"`

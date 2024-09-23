@@ -55,6 +55,7 @@ easyjson:
 	go get github.com/josharian/intern && \
 	go get github.com/mailru/easyjson && \
 	go install github.com/mailru/easyjson/...@latest && \
+	(cd internal/query && easyjson -lower_camel_case -output_filename response_types_easyjson.go response_types.go) && \
 	easyjson -lower_camel_case -output_filename query_easyjson.go query.go
 
 .PHONY: setup deps update test lint help fuzz-dsn easyjson

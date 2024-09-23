@@ -167,7 +167,11 @@ func easyjson90b16446DecodeGithubComSnowflakedbGosnowflakeV21(in *jlexer.Lexer, 
 				}
 				for !in.IsDelim(']') {
 					var v2 query.ExecResponseRowType
-					easyjson90b16446DecodeGithubComSnowflakedbGosnowflakeV2InternalQuery(in, &v2)
+					if in.IsNull() {
+						in.Skip()
+					} else {
+						(v2).UnmarshalEasyJSON(in)
+					}
 					out.RowType = append(out.RowType, v2)
 					in.WantComma()
 				}
@@ -324,7 +328,7 @@ func easyjson90b16446DecodeGithubComSnowflakedbGosnowflakeV21(in *jlexer.Lexer, 
 				}
 				for !in.IsDelim(']') {
 					var v5 query.ExecResponseChunk
-					easyjson90b16446DecodeGithubComSnowflakedbGosnowflakeV2InternalQuery1(in, &v5)
+					easyjson90b16446DecodeGithubComSnowflakedbGosnowflakeV2InternalQuery(in, &v5)
 					out.Chunks = append(out.Chunks, v5)
 					in.WantComma()
 				}
@@ -593,7 +597,7 @@ func easyjson90b16446EncodeGithubComSnowflakedbGosnowflakeV21(out *jwriter.Write
 				if v11 > 0 {
 					out.RawByte(',')
 				}
-				easyjson90b16446EncodeGithubComSnowflakedbGosnowflakeV2InternalQuery(out, v12)
+				(v12).MarshalEasyJSON(out)
 			}
 			out.RawByte(']')
 		}
@@ -776,7 +780,7 @@ func easyjson90b16446EncodeGithubComSnowflakedbGosnowflakeV21(out *jwriter.Write
 				if v17 > 0 {
 					out.RawByte(',')
 				}
-				easyjson90b16446EncodeGithubComSnowflakedbGosnowflakeV2InternalQuery1(out, v18)
+				easyjson90b16446EncodeGithubComSnowflakedbGosnowflakeV2InternalQuery(out, v18)
 			}
 			out.RawByte(']')
 		}
@@ -1563,7 +1567,7 @@ func easyjson90b16446EncodeGithubComSnowflakedbGosnowflakeV23(out *jwriter.Write
 	_ = first
 	out.RawByte('}')
 }
-func easyjson90b16446DecodeGithubComSnowflakedbGosnowflakeV2InternalQuery1(in *jlexer.Lexer, out *query.ExecResponseChunk) {
+func easyjson90b16446DecodeGithubComSnowflakedbGosnowflakeV2InternalQuery(in *jlexer.Lexer, out *query.ExecResponseChunk) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -1611,7 +1615,7 @@ func easyjson90b16446DecodeGithubComSnowflakedbGosnowflakeV2InternalQuery1(in *j
 		in.Consumed()
 	}
 }
-func easyjson90b16446EncodeGithubComSnowflakedbGosnowflakeV2InternalQuery1(out *jwriter.Writer, in query.ExecResponseChunk) {
+func easyjson90b16446EncodeGithubComSnowflakedbGosnowflakeV2InternalQuery(out *jwriter.Writer, in query.ExecResponseChunk) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -1634,291 +1638,6 @@ func easyjson90b16446EncodeGithubComSnowflakedbGosnowflakeV2InternalQuery1(out *
 		const prefix string = ",\"compressedSize\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.CompressedSize))
-	}
-	out.RawByte('}')
-}
-func easyjson90b16446DecodeGithubComSnowflakedbGosnowflakeV2InternalQuery(in *jlexer.Lexer, out *query.ExecResponseRowType) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		switch key {
-		case "name":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Name = string(in.String())
-			}
-		case "fields":
-			if in.IsNull() {
-				in.Skip()
-				out.Fields = nil
-			} else {
-				in.Delim('[')
-				if out.Fields == nil {
-					if !in.IsDelim(']') {
-						out.Fields = make([]query.FieldMetadata, 0, 0)
-					} else {
-						out.Fields = []query.FieldMetadata{}
-					}
-				} else {
-					out.Fields = (out.Fields)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v27 query.FieldMetadata
-					easyjson90b16446DecodeGithubComSnowflakedbGosnowflakeV2InternalQuery2(in, &v27)
-					out.Fields = append(out.Fields, v27)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
-		case "byteLength":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.ByteLength = int64(in.Int64())
-			}
-		case "length":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Length = int64(in.Int64())
-			}
-		case "type":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Type = string(in.String())
-			}
-		case "precision":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Precision = int64(in.Int64())
-			}
-		case "scale":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Scale = int64(in.Int64())
-			}
-		case "nullable":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Nullable = bool(in.Bool())
-			}
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson90b16446EncodeGithubComSnowflakedbGosnowflakeV2InternalQuery(out *jwriter.Writer, in query.ExecResponseRowType) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	{
-		const prefix string = ",\"name\":"
-		out.RawString(prefix[1:])
-		out.String(string(in.Name))
-	}
-	{
-		const prefix string = ",\"fields\":"
-		out.RawString(prefix)
-		if in.Fields == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
-		} else {
-			out.RawByte('[')
-			for v28, v29 := range in.Fields {
-				if v28 > 0 {
-					out.RawByte(',')
-				}
-				easyjson90b16446EncodeGithubComSnowflakedbGosnowflakeV2InternalQuery2(out, v29)
-			}
-			out.RawByte(']')
-		}
-	}
-	{
-		const prefix string = ",\"byteLength\":"
-		out.RawString(prefix)
-		out.Int64(int64(in.ByteLength))
-	}
-	{
-		const prefix string = ",\"length\":"
-		out.RawString(prefix)
-		out.Int64(int64(in.Length))
-	}
-	{
-		const prefix string = ",\"type\":"
-		out.RawString(prefix)
-		out.String(string(in.Type))
-	}
-	{
-		const prefix string = ",\"precision\":"
-		out.RawString(prefix)
-		out.Int64(int64(in.Precision))
-	}
-	{
-		const prefix string = ",\"scale\":"
-		out.RawString(prefix)
-		out.Int64(int64(in.Scale))
-	}
-	{
-		const prefix string = ",\"nullable\":"
-		out.RawString(prefix)
-		out.Bool(bool(in.Nullable))
-	}
-	out.RawByte('}')
-}
-func easyjson90b16446DecodeGithubComSnowflakedbGosnowflakeV2InternalQuery2(in *jlexer.Lexer, out *query.FieldMetadata) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		switch key {
-		case "name":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Name = string(in.String())
-			}
-		case "type":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Type = string(in.String())
-			}
-		case "nullable":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Nullable = bool(in.Bool())
-			}
-		case "length":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Length = int(in.Int())
-			}
-		case "scale":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Scale = int(in.Int())
-			}
-		case "precision":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Precision = int(in.Int())
-			}
-		case "fields":
-			if in.IsNull() {
-				in.Skip()
-				out.Fields = nil
-			} else {
-				in.Delim('[')
-				if out.Fields == nil {
-					if !in.IsDelim(']') {
-						out.Fields = make([]query.FieldMetadata, 0, 0)
-					} else {
-						out.Fields = []query.FieldMetadata{}
-					}
-				} else {
-					out.Fields = (out.Fields)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v30 query.FieldMetadata
-					easyjson90b16446DecodeGithubComSnowflakedbGosnowflakeV2InternalQuery2(in, &v30)
-					out.Fields = append(out.Fields, v30)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson90b16446EncodeGithubComSnowflakedbGosnowflakeV2InternalQuery2(out *jwriter.Writer, in query.FieldMetadata) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	if in.Name != "" {
-		const prefix string = ",\"name\":"
-		first = false
-		out.RawString(prefix[1:])
-		out.String(string(in.Name))
-	}
-	{
-		const prefix string = ",\"type\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Type))
-	}
-	{
-		const prefix string = ",\"nullable\":"
-		out.RawString(prefix)
-		out.Bool(bool(in.Nullable))
-	}
-	{
-		const prefix string = ",\"length\":"
-		out.RawString(prefix)
-		out.Int(int(in.Length))
-	}
-	{
-		const prefix string = ",\"scale\":"
-		out.RawString(prefix)
-		out.Int(int(in.Scale))
-	}
-	{
-		const prefix string = ",\"precision\":"
-		out.RawString(prefix)
-		out.Int(int(in.Precision))
-	}
-	if len(in.Fields) != 0 {
-		const prefix string = ",\"fields\":"
-		out.RawString(prefix)
-		{
-			out.RawByte('[')
-			for v31, v32 := range in.Fields {
-				if v31 > 0 {
-					out.RawByte(',')
-				}
-				easyjson90b16446EncodeGithubComSnowflakedbGosnowflakeV2InternalQuery2(out, v32)
-			}
-			out.RawByte(']')
-		}
 	}
 	out.RawByte('}')
 }
