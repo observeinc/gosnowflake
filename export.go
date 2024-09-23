@@ -58,7 +58,26 @@ func (sr *snowflakeResult) SetExecResponse(er *ExecResponse) {
 }
 
 // StringToValue exports stringToValue
-func StringToValue(ctx context.Context, dest *driver.Value, srcColumnMeta ExecResponseRowType, srcValue *string, loc *time.Location, params map[string]*string) error {
-	sp := newSyncParams(params)
+// Deprecated: please use StringToValueWithContext instead
+func StringToValue(dest *driver.Value, srcColumnMeta ExecResponseRowType, srcValue *string, loc *time.Location) error {
+	sp := newSyncParams(nil)
 	return stringToValue(context.Background(), dest, srcColumnMeta, srcValue, loc, &sp)
+}
+
+// StringToValueWithContext exports stringToValue
+func StringToValueWithContext(ctx context.Context, dest *driver.Value, srcColumnMeta ExecResponseRowType, srcValue *string, loc *time.Location, params map[string]*string) error {
+	sp := newSyncParams(params)
+	return stringToValue(ctx, dest, srcColumnMeta, srcValue, loc, &sp)
+}
+
+// ExecResponseRowTypeEquals exports execResponseRowTypeEquals
+func ExecResponseRowTypeEquals(a, b ExecResponseRowType) bool {
+	// Skip fieldMetadata
+	return a.Name == b.Name &&
+		a.ByteLength == b.ByteLength &&
+		a.Length == b.Length &&
+		a.Type == b.Type &&
+		a.Precision == b.Precision &&
+		a.Scale == b.Scale &&
+		a.Nullable == b.Nullable
 }
