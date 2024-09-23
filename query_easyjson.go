@@ -18,7 +18,115 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjson90b16446DecodeGithubComObserveincGosnowflake(in *jlexer.Lexer, out *execResponse) {
+func easyjson90b16446DecodeGithubComObserveincGosnowflake(in *jlexer.Lexer, out *execResponseRowType) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "name":
+			out.Name = string(in.String())
+		case "byteLength":
+			out.ByteLength = int64(in.Int64())
+		case "length":
+			out.Length = int64(in.Int64())
+		case "type":
+			out.Type = string(in.String())
+		case "precision":
+			out.Precision = int64(in.Int64())
+		case "scale":
+			out.Scale = int64(in.Int64())
+		case "nullable":
+			out.Nullable = bool(in.Bool())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson90b16446EncodeGithubComObserveincGosnowflake(out *jwriter.Writer, in execResponseRowType) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"name\":"
+		out.RawString(prefix[1:])
+		out.String(string(in.Name))
+	}
+	{
+		const prefix string = ",\"byteLength\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.ByteLength))
+	}
+	{
+		const prefix string = ",\"length\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.Length))
+	}
+	{
+		const prefix string = ",\"type\":"
+		out.RawString(prefix)
+		out.String(string(in.Type))
+	}
+	{
+		const prefix string = ",\"precision\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.Precision))
+	}
+	{
+		const prefix string = ",\"scale\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.Scale))
+	}
+	{
+		const prefix string = ",\"nullable\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.Nullable))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v execResponseRowType) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson90b16446EncodeGithubComObserveincGosnowflake(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v execResponseRowType) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson90b16446EncodeGithubComObserveincGosnowflake(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *execResponseRowType) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson90b16446DecodeGithubComObserveincGosnowflake(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *execResponseRowType) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson90b16446DecodeGithubComObserveincGosnowflake(l, v)
+}
+func easyjson90b16446DecodeGithubComObserveincGosnowflake1(in *jlexer.Lexer, out *execResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -38,7 +146,7 @@ func easyjson90b16446DecodeGithubComObserveincGosnowflake(in *jlexer.Lexer, out 
 		}
 		switch key {
 		case "data":
-			easyjson90b16446DecodeGithubComObserveincGosnowflake1(in, &out.Data)
+			easyjson90b16446DecodeGithubComObserveincGosnowflake2(in, &out.Data)
 		case "message":
 			out.Message = string(in.String())
 		case "code":
@@ -55,14 +163,14 @@ func easyjson90b16446DecodeGithubComObserveincGosnowflake(in *jlexer.Lexer, out 
 		in.Consumed()
 	}
 }
-func easyjson90b16446EncodeGithubComObserveincGosnowflake(out *jwriter.Writer, in execResponse) {
+func easyjson90b16446EncodeGithubComObserveincGosnowflake1(out *jwriter.Writer, in execResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
 	{
 		const prefix string = ",\"data\":"
 		out.RawString(prefix[1:])
-		easyjson90b16446EncodeGithubComObserveincGosnowflake1(out, in.Data)
+		easyjson90b16446EncodeGithubComObserveincGosnowflake2(out, in.Data)
 	}
 	{
 		const prefix string = ",\"message\":"
@@ -85,27 +193,27 @@ func easyjson90b16446EncodeGithubComObserveincGosnowflake(out *jwriter.Writer, i
 // MarshalJSON supports json.Marshaler interface
 func (v execResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson90b16446EncodeGithubComObserveincGosnowflake(&w, v)
+	easyjson90b16446EncodeGithubComObserveincGosnowflake1(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v execResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson90b16446EncodeGithubComObserveincGosnowflake(w, v)
+	easyjson90b16446EncodeGithubComObserveincGosnowflake1(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *execResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson90b16446DecodeGithubComObserveincGosnowflake(&r, v)
+	easyjson90b16446DecodeGithubComObserveincGosnowflake1(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *execResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson90b16446DecodeGithubComObserveincGosnowflake(l, v)
+	easyjson90b16446DecodeGithubComObserveincGosnowflake1(l, v)
 }
-func easyjson90b16446DecodeGithubComObserveincGosnowflake1(in *jlexer.Lexer, out *execResponseData) {
+func easyjson90b16446DecodeGithubComObserveincGosnowflake2(in *jlexer.Lexer, out *execResponseData) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -141,7 +249,7 @@ func easyjson90b16446DecodeGithubComObserveincGosnowflake1(in *jlexer.Lexer, out
 				}
 				for !in.IsDelim(']') {
 					var v1 nameValueParameter
-					easyjson90b16446DecodeGithubComObserveincGosnowflake2(in, &v1)
+					easyjson90b16446DecodeGithubComObserveincGosnowflake3(in, &v1)
 					out.Parameters = append(out.Parameters, v1)
 					in.WantComma()
 				}
@@ -164,7 +272,7 @@ func easyjson90b16446DecodeGithubComObserveincGosnowflake1(in *jlexer.Lexer, out
 				}
 				for !in.IsDelim(']') {
 					var v2 execResponseRowType
-					easyjson90b16446DecodeGithubComObserveincGosnowflake3(in, &v2)
+					(v2).UnmarshalEasyJSON(in)
 					out.RowType = append(out.RowType, v2)
 					in.WantComma()
 				}
@@ -413,7 +521,7 @@ func easyjson90b16446DecodeGithubComObserveincGosnowflake1(in *jlexer.Lexer, out
 		in.Consumed()
 	}
 }
-func easyjson90b16446EncodeGithubComObserveincGosnowflake1(out *jwriter.Writer, in execResponseData) {
+func easyjson90b16446EncodeGithubComObserveincGosnowflake2(out *jwriter.Writer, in execResponseData) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -427,7 +535,7 @@ func easyjson90b16446EncodeGithubComObserveincGosnowflake1(out *jwriter.Writer, 
 				if v9 > 0 {
 					out.RawByte(',')
 				}
-				easyjson90b16446EncodeGithubComObserveincGosnowflake2(out, v10)
+				easyjson90b16446EncodeGithubComObserveincGosnowflake3(out, v10)
 			}
 			out.RawByte(']')
 		}
@@ -446,7 +554,7 @@ func easyjson90b16446EncodeGithubComObserveincGosnowflake1(out *jwriter.Writer, 
 				if v11 > 0 {
 					out.RawByte(',')
 				}
-				easyjson90b16446EncodeGithubComObserveincGosnowflake3(out, v12)
+				(v12).MarshalEasyJSON(out)
 			}
 			out.RawByte(']')
 		}
@@ -1477,91 +1585,7 @@ func easyjson90b16446EncodeGithubComObserveincGosnowflake4(out *jwriter.Writer, 
 	}
 	out.RawByte('}')
 }
-func easyjson90b16446DecodeGithubComObserveincGosnowflake3(in *jlexer.Lexer, out *execResponseRowType) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "name":
-			out.Name = string(in.String())
-		case "byteLength":
-			out.ByteLength = int64(in.Int64())
-		case "length":
-			out.Length = int64(in.Int64())
-		case "type":
-			out.Type = string(in.String())
-		case "precision":
-			out.Precision = int64(in.Int64())
-		case "scale":
-			out.Scale = int64(in.Int64())
-		case "nullable":
-			out.Nullable = bool(in.Bool())
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson90b16446EncodeGithubComObserveincGosnowflake3(out *jwriter.Writer, in execResponseRowType) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	{
-		const prefix string = ",\"name\":"
-		out.RawString(prefix[1:])
-		out.String(string(in.Name))
-	}
-	{
-		const prefix string = ",\"byteLength\":"
-		out.RawString(prefix)
-		out.Int64(int64(in.ByteLength))
-	}
-	{
-		const prefix string = ",\"length\":"
-		out.RawString(prefix)
-		out.Int64(int64(in.Length))
-	}
-	{
-		const prefix string = ",\"type\":"
-		out.RawString(prefix)
-		out.String(string(in.Type))
-	}
-	{
-		const prefix string = ",\"precision\":"
-		out.RawString(prefix)
-		out.Int64(int64(in.Precision))
-	}
-	{
-		const prefix string = ",\"scale\":"
-		out.RawString(prefix)
-		out.Int64(int64(in.Scale))
-	}
-	{
-		const prefix string = ",\"nullable\":"
-		out.RawString(prefix)
-		out.Bool(bool(in.Nullable))
-	}
-	out.RawByte('}')
-}
-func easyjson90b16446DecodeGithubComObserveincGosnowflake2(in *jlexer.Lexer, out *nameValueParameter) {
+func easyjson90b16446DecodeGithubComObserveincGosnowflake3(in *jlexer.Lexer, out *nameValueParameter) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -1600,7 +1624,7 @@ func easyjson90b16446DecodeGithubComObserveincGosnowflake2(in *jlexer.Lexer, out
 		in.Consumed()
 	}
 }
-func easyjson90b16446EncodeGithubComObserveincGosnowflake2(out *jwriter.Writer, in nameValueParameter) {
+func easyjson90b16446EncodeGithubComObserveincGosnowflake3(out *jwriter.Writer, in nameValueParameter) {
 	out.RawByte('{')
 	first := true
 	_ = first

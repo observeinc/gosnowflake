@@ -58,3 +58,8 @@ func (sr *snowflakeResult) SetExecResponse(er *ExecResponse) {
 func StringToValue(dest *driver.Value, srcColumnMeta execResponseRowType, srcValue *string, loc *time.Location) error {
 	return stringToValue(dest, srcColumnMeta, srcValue, loc)
 }
+
+// ExecResponseRowTypeEquals exports execResponseRowTypeEquals
+func ExecResponseRowTypeEquals(a, b ExecResponseRowType) bool {
+	return a == b
+}
