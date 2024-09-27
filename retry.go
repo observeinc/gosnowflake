@@ -3,6 +3,7 @@ package gosnowflake
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"math"
@@ -388,6 +389,13 @@ func (r *retryHTTP) execute() (res *http.Response, err error) {
 }
 
 func isRetryableError(req *http.Request, res *http.Response, err error) (bool, error) {
+	if errors.Is(err, context.DeadlineExceeded) {
+		// Don't retry and return an unwrapped DeadlineExceeded error
+		return false, context.DeadlineExceeded
+	} else if errors.Is(err, context.Canceled) {
+		// Don't retry and return an unwrapped Canceled error
+		return false, context.Canceled
+	}
 	if err != nil && res == nil { // Failed http connection. Most probably client timeout.
 		return true, err
 	}
