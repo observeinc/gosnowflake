@@ -4,6 +4,7 @@ parameters*.json
 parameters*.bat
 *.pem
 *.p8
+*.pem
 coverage.txt
 fuzz-*/
 /select1
