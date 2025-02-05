@@ -375,42 +375,52 @@ func (dbt *DBTest) mustPrepare(query string) (stmt *sql.Stmt) {
 	return stmt
 }
 
-func (dbt *DBTest) forceJSON() {
-	dbt.mustExec(forceJSON)
-}
-
-func (dbt *DBTest) forceArrow() {
-	dbt.mustExec(forceARROW)
-	dbt.mustExec("alter session set ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = false")
-	dbt.mustExec("alter session set FORCE_ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = false")
-}
-
-func (dbt *DBTest) forceNativeArrow() { // structured types
-	dbt.mustExec(forceARROW)
-	dbt.mustExec("alter session set ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = true")
-	dbt.mustExec("alter session set FORCE_ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = true")
-}
-
-func (dbt *DBTest) enableStructuredTypes() {
-	_, err := dbt.exec("alter session set ENABLE_STRUCTURED_TYPES_IN_CLIENT_RESPONSE = true")
-	if err != nil {
-		dbt.Log(err)
-	}
-	_, err = dbt.exec("alter session set IGNORE_CLIENT_VESRION_IN_STRUCTURED_TYPES_RESPONSE = true")
-	if err != nil {
-		dbt.Log(err)
+func (dbt *DBTest) forceJSON(t *testing.T) {
+	if _, err := dbt.exec(forceJSON); err != nil {
+		t.Skip("GO_QUERY_RESULT_FORMAT = JSON is not supported in this environment")
 	}
 }
 
-func (dbt *DBTest) enableStructuredTypesBinding() {
-	dbt.enableStructuredTypes()
-	_, err := dbt.exec("ALTER SESSION SET ENABLE_OBJECT_TYPED_BINDS = true")
-	if err != nil {
-		dbt.Log(err)
+func (dbt *DBTest) forceArrow(t *testing.T) {
+	if _, err := dbt.exec(forceARROW); err != nil {
+		t.Skip("GO_QUERY_RESULT_FORMAT = ARROW is not supported in this environment")
 	}
-	_, err = dbt.exec("ALTER SESSION SET ENABLE_STRUCTURED_TYPES_IN_BINDS = Enable")
-	if err != nil {
-		dbt.Log(err)
+	if _, err := dbt.exec("alter session set ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = false"); err != nil {
+		t.Skip("ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = false is not supported in this environment")
+	}
+	if _, err := dbt.exec("alter session set FORCE_ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = false"); err != nil {
+		t.Skip("FORCE_ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = false is not supported in this environment")
+	}
+}
+
+func (dbt *DBTest) forceNativeArrow(t *testing.T) { // structured types
+	if _, err := dbt.exec(forceARROW); err != nil {
+		t.Skip("GO_QUERY_RESULT_FORMAT = ARROW is not supported in this environment")
+	}
+	if _, err := dbt.exec("alter session set ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = true"); err != nil {
+		t.Skip("ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = true is not supported in this environment")
+	}
+	if _, err := dbt.exec("alter session set FORCE_ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = true"); err != nil {
+		t.Skip("FORCE_ENABLE_STRUCTURED_TYPES_NATIVE_ARROW_FORMAT = true is not supported in this environment")
+	}
+}
+
+func (dbt *DBTest) enableStructuredTypes(t *testing.T) {
+	if _, err := dbt.exec("alter session set ENABLE_STRUCTURED_TYPES_IN_CLIENT_RESPONSE = true"); err != nil {
+		t.Skip("ENABLE_STRUCTURED_TYPES_IN_CLIENT_RESPONSE = true is not supported in this environment")
+	}
+	if _, err := dbt.exec("alter session set IGNORE_CLIENT_VESRION_IN_STRUCTURED_TYPES_RESPONSE = true"); err != nil {
+		t.Skip("IGNORE_CLIENT_VESRION_IN_STRUCTURED_TYPES_RESPONSE = true is not supported in this environment")
+	}
+}
+
+func (dbt *DBTest) enableStructuredTypesBinding(t *testing.T) {
+	dbt.enableStructuredTypes(t)
+	if _, err := dbt.exec("ALTER SESSION SET ENABLE_OBJECT_TYPED_BINDS = true"); err != nil {
+		t.Skip("ENABLE_OBJECT_TYPED_BINDS = true is not supported in this environment")
+	}
+	if _, err := dbt.exec("ALTER SESSION SET ENABLE_STRUCTURED_TYPES_IN_BINDS = Enable"); err != nil {
+		t.Skip("ENABLE_STRUCTURED_TYPES_IN_BINDS = Enable is not supported in this environment")
 	}
 }
 

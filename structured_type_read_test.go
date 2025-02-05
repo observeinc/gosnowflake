@@ -1789,8 +1789,8 @@ func TestArraysWithNullValues(t *testing.T) {
 	}
 	runDBTest(t, func(dbt *DBTest) {
 		dbt.mustExec("ALTER SESSION SET TIMEZONE = 'Europe/Warsaw'")
-		dbt.forceNativeArrow()
-		dbt.enableStructuredTypes()
+		dbt.forceNativeArrow(t)
+		dbt.enableStructuredTypes(t)
 		for _, tc := range testcases {
 			t.Run(tc.name, func(t *testing.T) {
 				rows := dbt.mustQueryContext(WithStructuredTypesEnabled(WithArrayValuesNullable(context.Background())), tc.query)
@@ -1834,8 +1834,8 @@ func TestArraysWithNullValuesHigherPrecision(t *testing.T) {
 	}
 	runDBTest(t, func(dbt *DBTest) {
 		dbt.mustExec("ALTER SESSION SET TIMEZONE = 'Europe/Warsaw'")
-		dbt.forceNativeArrow()
-		dbt.enableStructuredTypes()
+		dbt.forceNativeArrow(t)
+		dbt.enableStructuredTypes(t)
 		for _, tc := range testcases {
 			t.Run(tc.name, func(t *testing.T) {
 				ctx := WithHigherPrecision(WithStructuredTypesEnabled(WithArrayValuesNullable(context.Background())))
@@ -2011,12 +2011,12 @@ func TestWithHigherPrecision(t *testing.T) {
 
 func TestStructuredTypeInArrowBatchesSimple(t *testing.T) {
 	runDBTest(t, func(dbt *DBTest) {
-		dbt.enableStructuredTypes()
+		dbt.enableStructuredTypes(t)
 		pool := memory.NewCheckedAllocator(memory.DefaultAllocator)
 		defer pool.AssertSize(t, 0)
 		ctx := WithArrowBatches(WithArrowAllocator(context.Background(), pool))
 
-		dbt.forceNativeArrow()
+		dbt.forceNativeArrow(t)
 		var err error
 		var rows driver.Rows
 		err = dbt.conn.Raw(func(sc any) error {
@@ -2041,12 +2041,12 @@ func TestStructuredTypeInArrowBatchesSimple(t *testing.T) {
 
 func TestStructuredTypeInArrowBatches(t *testing.T) {
 	runDBTest(t, func(dbt *DBTest) {
-		dbt.enableStructuredTypes()
+		dbt.enableStructuredTypes(t)
 		pool := memory.NewCheckedAllocator(memory.DefaultAllocator)
 		defer pool.AssertSize(t, 0)
 		ctx := WithArrowBatches(WithArrowAllocator(context.Background(), pool))
 
-		dbt.forceNativeArrow()
+		dbt.forceNativeArrow(t)
 		var err error
 		var rows driver.Rows
 		err = dbt.conn.Raw(func(sc any) error {
@@ -2077,10 +2077,10 @@ func TestStructuredTypeInArrowBatches(t *testing.T) {
 
 func TestStructuredTypeInArrowBatchesWithTimestampOptionAndHigherPrecisionAndUtf8Validation(t *testing.T) {
 	runDBTest(t, func(dbt *DBTest) {
-		dbt.enableStructuredTypes()
+		dbt.enableStructuredTypes(t)
 		pool := memory.NewCheckedAllocator(memory.DefaultAllocator)
 		defer pool.AssertSize(t, 0)
-		dbt.forceNativeArrow()
+		dbt.forceNativeArrow(t)
 		var err error
 		var rows driver.Rows
 		err = dbt.conn.Raw(func(sc any) error {
@@ -2120,10 +2120,10 @@ func TestStructuredTypeInArrowBatchesWithTimestampOptionAndHigherPrecisionAndUtf
 
 func TestStructuredTypeInArrowBatchesWithEmbeddedObject(t *testing.T) {
 	runDBTest(t, func(dbt *DBTest) {
-		dbt.enableStructuredTypes()
+		dbt.enableStructuredTypes(t)
 		pool := memory.NewCheckedAllocator(memory.DefaultAllocator)
 		defer pool.AssertSize(t, 0)
-		dbt.forceNativeArrow()
+		dbt.forceNativeArrow(t)
 		var err error
 		var rows driver.Rows
 		err = dbt.conn.Raw(func(sc any) error {
@@ -2148,10 +2148,10 @@ func TestStructuredTypeInArrowBatchesWithEmbeddedObject(t *testing.T) {
 
 func TestStructuredTypeInArrowBatchesAsNull(t *testing.T) {
 	runDBTest(t, func(dbt *DBTest) {
-		dbt.enableStructuredTypes()
+		dbt.enableStructuredTypes(t)
 		pool := memory.NewCheckedAllocator(memory.DefaultAllocator)
 		defer pool.AssertSize(t, 0)
-		dbt.forceNativeArrow()
+		dbt.forceNativeArrow(t)
 		var err error
 		var rows driver.Rows
 		err = dbt.conn.Raw(func(sc any) error {
@@ -2177,12 +2177,12 @@ func TestStructuredTypeInArrowBatchesAsNull(t *testing.T) {
 
 func TestStructuredArrayInArrowBatches(t *testing.T) {
 	runDBTest(t, func(dbt *DBTest) {
-		dbt.enableStructuredTypes()
+		dbt.enableStructuredTypes(t)
 		pool := memory.NewCheckedAllocator(memory.DefaultAllocator)
 		defer pool.AssertSize(t, 0)
 		ctx := WithArrowBatches(WithArrowAllocator(context.Background(), pool))
 
-		dbt.forceNativeArrow()
+		dbt.forceNativeArrow(t)
 		var err error
 		var rows driver.Rows
 		err = dbt.conn.Raw(func(sc any) error {
@@ -2213,12 +2213,12 @@ func TestStructuredArrayInArrowBatches(t *testing.T) {
 
 func TestStructuredMapInArrowBatches(t *testing.T) {
 	runDBTest(t, func(dbt *DBTest) {
-		dbt.enableStructuredTypes()
+		dbt.enableStructuredTypes(t)
 		pool := memory.NewCheckedAllocator(memory.DefaultAllocator)
 		defer pool.AssertSize(t, 0)
 		ctx := WithArrowBatches(WithArrowAllocator(context.Background(), pool))
 
-		dbt.forceNativeArrow()
+		dbt.forceNativeArrow(t)
 		var err error
 		var rows driver.Rows
 		err = dbt.conn.Raw(func(sc any) error {
@@ -2246,30 +2246,30 @@ func TestStructuredMapInArrowBatches(t *testing.T) {
 func forAllStructureTypeFormats(dbt *DBTest, f func(t *testing.T, format string)) {
 	for _, tc := range []struct {
 		name        string
-		forceFormat func(test *DBTest)
+		forceFormat func(t *testing.T, test *DBTest)
 	}{
 		{
 			name: "JSON",
-			forceFormat: func(test *DBTest) {
-				dbt.forceJSON()
+			forceFormat: func(t *testing.T, test *DBTest) {
+				dbt.forceJSON(t)
 			},
 		},
 		{
 			name: "ARROW",
-			forceFormat: func(test *DBTest) {
-				dbt.forceArrow()
+			forceFormat: func(t *testing.T, test *DBTest) {
+				dbt.forceArrow(t)
 			},
 		},
 		{
 			name: "NATIVE_ARROW",
-			forceFormat: func(test *DBTest) {
-				dbt.forceNativeArrow()
+			forceFormat: func(t *testing.T, test *DBTest) {
+				dbt.forceNativeArrow(t)
 			},
 		},
 	} {
 		dbt.T.Run(tc.name, func(t *testing.T) {
-			tc.forceFormat(dbt)
-			dbt.enableStructuredTypes()
+			tc.forceFormat(t, dbt)
+			dbt.enableStructuredTypes(t)
 			f(t, tc.name)
 		})
 	}
