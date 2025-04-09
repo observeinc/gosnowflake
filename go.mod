@@ -71,3 +71,5 @@ require (
 	golang.org/x/tools v0.29.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
 )
+
+retract v1.13.0 // introduces a race condition in connection retry
