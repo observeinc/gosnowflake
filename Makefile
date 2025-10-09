@@ -12,8 +12,9 @@ include gosnowflake.mak
 test_setup: test_teardown
 	python3 ci/scripts/hang_webserver.py 12345 &
 
+## Find the process that blocks the port and kill it to be ready for the next run
 test_teardown:
-	pkill -9 hang_webserver || true
+	lsof -t -i :12345 | xargs -r kill
 
 test: deps test_setup
 	./ci/scripts/execute_tests.sh
