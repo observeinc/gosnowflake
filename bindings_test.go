@@ -1404,7 +1404,6 @@ func testLOBRetrieval(t *testing.T, useArrowFormat bool) {
 				assertEqualF(t, len(res), testSize)
 			})
 		}
-		dbt.mustExec(unsetFeatureMaxLOBSize)
 	})
 }
 
