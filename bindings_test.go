@@ -1390,6 +1390,10 @@ func testLOBRetrieval(t *testing.T, useArrowFormat bool) {
 		for _, testSize := range testSizes {
 			t.Run(fmt.Sprintf("testLOB_%v_useArrowFormat=%v", strconv.Itoa(testSize), strconv.FormatBool(useArrowFormat)), func(t *testing.T) {
 				rows, err := dbt.query(fmt.Sprintf("SELECT randstr(%v, 124)", testSize))
+				if testSize > ResponseBodyLimit {
+					assertEqualF(t, err, ErrResponseTooLarge)
+					return
+				}
 				assertNilF(t, err)
 				defer func() {
 					assertNilF(t, rows.Close())

@@ -258,6 +258,7 @@ func TestLogKeysDefault(t *testing.T) {
 	logger := CreateDefaultLogger()
 	buf := &bytes.Buffer{}
 	logger.SetOutput(buf)
+	logger.SetLogLevel("info")
 
 	ctx := context.Background()
 
@@ -283,6 +284,7 @@ func TestLogKeysWithRegisterContextVariableToLog(t *testing.T) {
 	logger := CreateDefaultLogger()
 	buf := &bytes.Buffer{}
 	logger.SetOutput(buf)
+	logger.SetLogLevel("info")
 
 	ctx := context.Background()
 
@@ -326,6 +328,7 @@ func TestLogMaskSecrets(t *testing.T) {
 	logger := CreateDefaultLogger()
 	buf := &bytes.Buffer{}
 	logger.SetOutput(buf)
+	logger.SetLogLevel("info")
 
 	ctx := context.Background()
 	query := "create user testuser password='testpassword'"
