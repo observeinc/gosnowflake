@@ -17,7 +17,7 @@ test_teardown:
 	lsof -t -i :12345 | xargs -r kill
 
 test: deps test_setup
-	./ci/scripts/execute_tests.sh
+	./ci/scripts/execute_tests.sh $(TESTNAME)
 
 ## Run Coverage tests
 cov:
