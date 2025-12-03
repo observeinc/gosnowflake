@@ -15,10 +15,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	sfconfig "github.com/snowflakedb/gosnowflake/v2/internal/config"
-	"github.com/snowflakedb/gosnowflake/v2/internal/errors"
+	sfconfig "github.com/observeinc/gosnowflake/v2/internal/config"
+	"github.com/observeinc/gosnowflake/v2/internal/errors"
 
-	ia "github.com/snowflakedb/gosnowflake/v2/internal/arrow"
+	ia "github.com/observeinc/gosnowflake/v2/internal/arrow"
 	"go.opentelemetry.io/otel/propagation"
 )
 

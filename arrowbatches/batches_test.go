@@ -22,8 +22,8 @@ import (
 	"github.com/apache/arrow-go/v18/arrow/array"
 	"github.com/apache/arrow-go/v18/arrow/memory"
 
-	sf "github.com/snowflakedb/gosnowflake/v2"
-	ia "github.com/snowflakedb/gosnowflake/v2/internal/arrow"
+	sf "github.com/observeinc/gosnowflake/v2"
+	ia "github.com/observeinc/gosnowflake/v2/internal/arrow"
 )
 
 // testConn holds a reusable database connection for running multiple queries.

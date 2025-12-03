@@ -15,8 +15,8 @@ import (
 	"github.com/apache/arrow-go/v18/arrow"
 	"github.com/apache/arrow-go/v18/arrow/array"
 	"github.com/apache/arrow-go/v18/arrow/memory"
-	ia "github.com/snowflakedb/gosnowflake/v2/internal/arrow"
-	sferrors "github.com/snowflakedb/gosnowflake/v2/internal/errors"
+	ia "github.com/observeinc/gosnowflake/v2/internal/arrow"
+	sferrors "github.com/observeinc/gosnowflake/v2/internal/errors"
 )
 
 func TestBadChunkData(t *testing.T) {

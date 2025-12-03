@@ -14,7 +14,7 @@ import (
 	"testing"
 	"time"
 
-	sferrors "github.com/snowflakedb/gosnowflake/v2/internal/errors"
+	sferrors "github.com/observeinc/gosnowflake/v2/internal/errors"
 )
 
 func TestBuildUploadStreamPutSQL(t *testing.T) {

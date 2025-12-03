@@ -6,7 +6,7 @@ import (
 	"crypto/tls"
 	"encoding/pem"
 	"fmt"
-	sfconfig "github.com/snowflakedb/gosnowflake/v2/internal/config"
+	sfconfig "github.com/observeinc/gosnowflake/v2/internal/config"
 	"net/http"
 	"net/http/httptest"
 	"net/url"

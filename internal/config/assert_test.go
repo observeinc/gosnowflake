@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	sflogger "github.com/snowflakedb/gosnowflake/v2/internal/logger"
+	sflogger "github.com/observeinc/gosnowflake/v2/internal/logger"
 )
 
 // TODO temporary - move this to a common test utils package when we have one

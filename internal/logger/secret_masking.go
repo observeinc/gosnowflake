@@ -3,7 +3,7 @@ package logger
 import (
 	"context"
 	"fmt"
-	"github.com/snowflakedb/gosnowflake/v2/sflog"
+	"github.com/observeinc/gosnowflake/v2/sflog"
 	"io"
 	"log/slog"
 )

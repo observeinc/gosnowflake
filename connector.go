@@ -3,7 +3,7 @@ package gosnowflake
 import (
 	"context"
 	"database/sql/driver"
-	sfconfig "github.com/snowflakedb/gosnowflake/v2/internal/config"
+	sfconfig "github.com/observeinc/gosnowflake/v2/internal/config"
 )
 
 // InternalSnowflakeDriver is the interface for an internal Snowflake driver

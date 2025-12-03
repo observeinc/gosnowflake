@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	sfconfig "github.com/snowflakedb/gosnowflake/v2/internal/config"
+	sfconfig "github.com/observeinc/gosnowflake/v2/internal/config"
 	"io"
 	"net/http"
 	"sync"

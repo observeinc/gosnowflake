@@ -13,8 +13,8 @@ import (
 	"strings"
 	"time"
 
-	sferrors "github.com/snowflakedb/gosnowflake/v2/internal/errors"
-	loggerinternal "github.com/snowflakedb/gosnowflake/v2/internal/logger"
+	sferrors "github.com/observeinc/gosnowflake/v2/internal/errors"
+	loggerinternal "github.com/observeinc/gosnowflake/v2/internal/logger"
 )
 
 var logger = loggerinternal.NewLoggerProxy()

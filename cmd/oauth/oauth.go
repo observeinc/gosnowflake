@@ -11,7 +11,7 @@ import (
 	"net/url"
 	"os"
 
-	_ "github.com/snowflakedb/gosnowflake/v2"
+	_ "github.com/observeinc/gosnowflake/v2"
 )
 
 func main() {

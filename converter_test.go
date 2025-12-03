@@ -20,8 +20,8 @@ import (
 	"github.com/apache/arrow-go/v18/arrow/array"
 	"github.com/apache/arrow-go/v18/arrow/decimal128"
 	"github.com/apache/arrow-go/v18/arrow/memory"
-	"github.com/snowflakedb/gosnowflake/v2/internal/query"
-	"github.com/snowflakedb/gosnowflake/v2/internal/types"
+	"github.com/observeinc/gosnowflake/v2/internal/query"
+	"github.com/observeinc/gosnowflake/v2/internal/types"
 )
 
 func stringIntToDecimal(src string) (decimal128.Num, bool) {

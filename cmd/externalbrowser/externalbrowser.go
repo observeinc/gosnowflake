@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 
-	sf "github.com/snowflakedb/gosnowflake/v2"
+	sf "github.com/observeinc/gosnowflake/v2"
 )
 
 // A simple test program for authenticating with an external browser.

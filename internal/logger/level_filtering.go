@@ -6,7 +6,7 @@ import (
 	"io"
 	"log/slog"
 
-	"github.com/snowflakedb/gosnowflake/v2/sflog"
+	"github.com/observeinc/gosnowflake/v2/sflog"
 )
 
 // levelFilteringLogger wraps any logger and filters log messages based on log level.

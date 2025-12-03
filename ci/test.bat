@@ -88,7 +88,7 @@ if "%SEQUENTIAL_TESTS%"=="true" (
     for /f "usebackq delims=" %%p in (`go list ./...`) do (
         set PKG=%%p
         REM Convert full package path to relative path
-        set PKG_PATH=!PKG:github.com/snowflakedb/gosnowflake/v2=!
+        set PKG_PATH=!PKG:github.com/observeinc/gosnowflake/v2=!
         if "!PKG_PATH!"=="" (
             set PKG_PATH=.
         ) else (

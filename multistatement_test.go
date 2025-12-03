@@ -11,7 +11,7 @@ import (
 	"reflect"
 	"testing"
 
-	ia "github.com/snowflakedb/gosnowflake/v2/internal/arrow"
+	ia "github.com/observeinc/gosnowflake/v2/internal/arrow"
 	"time"
 )
 

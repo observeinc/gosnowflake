@@ -3,14 +3,14 @@ package arrowbatches
 import (
 	"context"
 	"fmt"
-	"github.com/snowflakedb/gosnowflake/v2/internal/query"
-	"github.com/snowflakedb/gosnowflake/v2/internal/types"
+	"github.com/observeinc/gosnowflake/v2/internal/query"
+	"github.com/observeinc/gosnowflake/v2/internal/types"
 	"math/big"
 	"strings"
 	"testing"
 	"time"
 
-	ia "github.com/snowflakedb/gosnowflake/v2/internal/arrow"
+	ia "github.com/observeinc/gosnowflake/v2/internal/arrow"
 
 	"github.com/apache/arrow-go/v18/arrow"
 	"github.com/apache/arrow-go/v18/arrow/array"

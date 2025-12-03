@@ -1,8 +1,8 @@
 package gosnowflake
 
 import (
-	loggerinternal "github.com/snowflakedb/gosnowflake/v2/internal/logger"
-	"github.com/snowflakedb/gosnowflake/v2/sflog"
+	loggerinternal "github.com/observeinc/gosnowflake/v2/internal/logger"
+	"github.com/observeinc/gosnowflake/v2/sflog"
 )
 
 // SFSessionIDKey is context key of session id

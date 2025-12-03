@@ -17,7 +17,7 @@ import (
 	"sync"
 	"time"
 
-	sfconfig "github.com/snowflakedb/gosnowflake/v2/internal/config"
+	sfconfig "github.com/observeinc/gosnowflake/v2/internal/config"
 )
 
 type tokenType string

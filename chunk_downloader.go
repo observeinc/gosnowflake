@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	errors2 "github.com/snowflakedb/gosnowflake/v2/internal/errors"
-	"github.com/snowflakedb/gosnowflake/v2/internal/query"
+	errors2 "github.com/observeinc/gosnowflake/v2/internal/errors"
+	"github.com/observeinc/gosnowflake/v2/internal/query"
 	"io"
 	"net/http"
 	"net/url"
@@ -16,7 +16,7 @@ import (
 	"sync"
 	"time"
 
-	ia "github.com/snowflakedb/gosnowflake/v2/internal/arrow"
+	ia "github.com/observeinc/gosnowflake/v2/internal/arrow"
 
 	"github.com/apache/arrow-go/v18/arrow"
 	"github.com/apache/arrow-go/v18/arrow/ipc"

@@ -3,7 +3,7 @@ package arrowbatches
 import (
 	"context"
 
-	ia "github.com/snowflakedb/gosnowflake/v2/internal/arrow"
+	ia "github.com/observeinc/gosnowflake/v2/internal/arrow"
 )
 
 // ConversionOptions bundles the options that control how raw Snowflake Arrow data is

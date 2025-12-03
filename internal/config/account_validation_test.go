@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	sferrors "github.com/snowflakedb/gosnowflake/v2/internal/errors"
+	sferrors "github.com/observeinc/gosnowflake/v2/internal/errors"
 )
 
 // validatableConfig returns a Config that satisfies every *other* requirement of

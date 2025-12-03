@@ -37,7 +37,7 @@ if [[ "$SEQUENTIAL_TESTS" == "true" ]] ; then
     (
       for pkg in $PACKAGES; do
         # Convert full package path to relative path
-        pkg_path=$(echo $pkg | sed "s|^github.com/snowflakedb/gosnowflake/v2||" | sed "s|^/||")
+        pkg_path=$(echo $pkg | sed "s|^github.com/observeinc/gosnowflake/v2||" | sed "s|^/||")
         if [[ -z "$pkg_path" ]]; then
           pkg_path="."
         else
@@ -52,7 +52,7 @@ if [[ "$SEQUENTIAL_TESTS" == "true" ]] ; then
     FAILED=0
     (
       for pkg in $PACKAGES; do
-        pkg_path=$(echo $pkg | sed "s|^github.com/snowflakedb/gosnowflake/v2||" | sed "s|^/||")
+        pkg_path=$(echo $pkg | sed "s|^github.com/observeinc/gosnowflake/v2||" | sed "s|^/||")
         if [[ -z "$pkg_path" ]]; then
           pkg_path="."
         else

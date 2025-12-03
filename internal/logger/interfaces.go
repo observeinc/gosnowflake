@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"github.com/snowflakedb/gosnowflake/v2/sflog"
+	"github.com/observeinc/gosnowflake/v2/sflog"
 )
 
 // Re-export types from sflog package to avoid circular dependencies

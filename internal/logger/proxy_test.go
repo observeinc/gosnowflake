@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/snowflakedb/gosnowflake/v2/sflog"
+	"github.com/observeinc/gosnowflake/v2/sflog"
 )
 
 func newProxyTestLogger(t *testing.T) (SFLogger, *bytes.Buffer, func()) {

@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/snowflakedb/gosnowflake/v2/internal/query"
+	"github.com/observeinc/gosnowflake/v2/internal/query"
 )
 
 type finalEOFStreamBody struct {
