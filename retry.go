@@ -376,8 +376,7 @@ func (r *retryHTTP) execute() (res *http.Response, err error) {
 		}
 		r.fullURL = retryReasonUpdater.replaceOrAdd(retryReason)
 		r.fullURL = ensureClientStartTimeIsSet(r.fullURL, clientStartTime)
-		logger.WithContext(r.ctx).Warningf("sleeping %v. to timeout: %v. retrying", sleepTime, totalTimeout)
-		logger.WithContext(r.ctx).Warningf("retry count: %v, retry reason: %v", retryCounter, retryReason)
+		logger.WithContext(r.ctx).Warningf("sleeping %v. to timeout: %v. retrying, path: %v, host: %v, retry count: %v, retry reason: %v", sleepTime, totalTimeout, r.fullURL.Path, r.fullURL.Host, retryCounter, retryReason)
 
 		await := time.NewTimer(sleepTime)
 		select {
