@@ -1,4 +1,4 @@
-module github.com/observeinc/gosnowflake
+module github.com/snowflakedb/gosnowflake
 
 go 1.24.0
 
@@ -21,7 +21,6 @@ require (
 	github.com/mailru/easyjson v0.9.1
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/sirupsen/logrus v1.9.3
-	github.com/snowflakedb/gosnowflake v0.0.0-00010101000000-000000000000
 	go.opentelemetry.io/otel v1.37.0
 	go.opentelemetry.io/otel/sdk v1.35.0
 	golang.org/x/crypto v0.41.0
@@ -76,5 +75,3 @@ require (
 	golang.org/x/tools v0.36.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
 )
-
-replace github.com/snowflakedb/gosnowflake => ./
