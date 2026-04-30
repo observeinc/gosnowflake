@@ -19,8 +19,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/snowflakedb/gosnowflake/internal/compilation"
-	internalos "github.com/snowflakedb/gosnowflake/internal/os"
+	"github.com/observeinc/gosnowflake/internal/compilation"
+	internalos "github.com/observeinc/gosnowflake/internal/os"
 )
 
 const (

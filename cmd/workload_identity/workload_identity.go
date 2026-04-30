@@ -6,9 +6,10 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	sf "github.com/snowflakedb/gosnowflake"
 	"log"
 	"os"
+
+	sf "github.com/observeinc/gosnowflake"
 )
 
 func main() {

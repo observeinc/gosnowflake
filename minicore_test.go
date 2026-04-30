@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/snowflakedb/gosnowflake/internal/compilation"
+	"github.com/observeinc/gosnowflake/internal/compilation"
 )
 
 func TestMiniCoreLoadSuccess(t *testing.T) {

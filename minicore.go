@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/snowflakedb/gosnowflake/internal/compilation"
-	internalos "github.com/snowflakedb/gosnowflake/internal/os"
+	"github.com/observeinc/gosnowflake/internal/compilation"
+	internalos "github.com/observeinc/gosnowflake/internal/os"
 )
 
 const disableMinicoreEnv = "SF_DISABLE_MINICORE"

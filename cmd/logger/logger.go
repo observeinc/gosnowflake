@@ -2,9 +2,10 @@ package main
 
 import (
 	"bytes"
-	sf "github.com/snowflakedb/gosnowflake"
 	"log"
 	"strings"
+
+	sf "github.com/observeinc/gosnowflake"
 )
 
 func main() {

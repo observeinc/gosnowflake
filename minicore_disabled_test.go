@@ -6,7 +6,7 @@ import (
 	"database/sql"
 	"testing"
 
-	"github.com/snowflakedb/gosnowflake/internal/compilation"
+	"github.com/observeinc/gosnowflake/internal/compilation"
 )
 
 func TestMiniCoreDisabledAtCompileTime(t *testing.T) {
