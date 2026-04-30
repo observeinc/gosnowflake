@@ -34,6 +34,21 @@ const (
 
 var defaultTransportConfigs transportConfigs = newDefaultTransportConfigs()
 
+// TransportWrapper wraps the transport created by the driver, if non-nil.
+// It is applied after OCSP/CRL/TLS configuration so all certificate revocation
+// behaviour is preserved. Must be set before any connections are opened.
+// It is not applied when Config.Transporter is set, since in that case the
+// caller owns the full transport stack.
+var TransportWrapper func(http.RoundTripper) http.RoundTripper
+
+// wrapTransport applies TransportWrapper to rt if it is set and err is nil.
+func wrapTransport(rt http.RoundTripper, err error) (http.RoundTripper, error) {
+	if err != nil || TransportWrapper == nil {
+		return rt, err
+	}
+	return TransportWrapper(rt), nil
+}
+
 // transportConfig holds the configuration for creating HTTP transports
 type transportConfig struct {
 	MaxIdleConns    int
@@ -176,7 +191,7 @@ func (tf *transportFactory) createTransport(transportConfig *transportConfig) (h
 	if tf.config == nil {
 		// should never happen in production, only in tests
 		logger.Warn("createTransport: got nil Config, using default one")
-		return tf.createNoRevocationTransport(transportConfig)
+		return wrapTransport(tf.createNoRevocationTransport(transportConfig))
 	}
 
 	// if user configured a custom Transporter, prioritize that
@@ -217,7 +232,7 @@ func (tf *transportFactory) createTransport(transportConfig *transportConfig) (h
 			}
 		}
 
-		return tf.createBaseTransport(transportConfig, tlsConfig)
+		return wrapTransport(tf.createBaseTransport(transportConfig, tlsConfig))
 	}
 
 	// Handle no revocation checking path
@@ -231,13 +246,13 @@ func (tf *transportFactory) createTransport(transportConfig *transportConfig) (h
 		// so here config is non-nil and Transporter is nil. GetTLSConfig returns
 		// a clone, so it is safe to use directly.
 		if tlsConfig, ok := sfconfig.GetTLSConfig(tf.config.TLSConfigName); ok && tlsConfig != nil {
-			return tf.createBaseTransport(transportConfig, tlsConfig)
+			return wrapTransport(tf.createBaseTransport(transportConfig, tlsConfig))
 		}
-		return tf.createNoRevocationTransport(transportConfig)
+		return wrapTransport(tf.createNoRevocationTransport(transportConfig))
 	}
 
 	logger.Debug("createTransport: will perform OCSP validation")
-	return tf.createOCSPTransport(transportConfig)
+	return wrapTransport(tf.createOCSPTransport(transportConfig))
 }
 
 // validateRevocationConfig checks for conflicting revocation settings
