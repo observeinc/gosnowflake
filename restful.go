@@ -21,6 +21,11 @@ const (
 	headerAcceptTypeApplicationSnowflake = "application/snowflake"
 )
 
+// cancelQueryTimeout bounds the cancel request sent after a query's context is done.
+// Without it the cancel request, including its retries, is bounded only by the client
+// timeout and keeps the caller waiting long after its own deadline.
+var cancelQueryTimeout = 30 * time.Second
+
 // Snowflake Server Endpoints
 const (
 	loginRequestPath         = "/session/v1/login-request"
@@ -205,7 +210,10 @@ func postRestfulQuery(
 
 	if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
 		// For context cancel/timeout cases, a special cancel request needs to be sent.
-		if cancelErr := sr.FuncCancelQuery(context.Background(), sr, requestID, timeout); cancelErr != nil {
+		// ctx is already done, so the cancel request gets its own bounded context.
+		cancelCtx, cancel := context.WithTimeout(context.Background(), cancelQueryTimeout)
+		defer cancel()
+		if cancelErr := sr.FuncCancelQuery(cancelCtx, sr, requestID, timeout); cancelErr != nil {
 			// Wrap the original error with the cancel error.
 			err = fmt.Errorf("failed to cancel query. cancelErr: %w, queryErr: %w", cancelErr, err)
 		}

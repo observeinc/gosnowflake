@@ -49,11 +49,12 @@ func wrapTransport(rt http.RoundTripper) http.RoundTripper {
 
 // transportConfig holds the configuration for creating HTTP transports
 type transportConfig struct {
-	MaxIdleConns    int
-	IdleConnTimeout time.Duration
-	DialTimeout     time.Duration
-	KeepAlive       time.Duration
-	DisableProxy    bool
+	MaxIdleConns        int
+	IdleConnTimeout     time.Duration
+	DialTimeout         time.Duration
+	KeepAlive           time.Duration
+	TLSHandshakeTimeout time.Duration
+	DisableProxy        bool
 }
 
 // TransportFactory handles creation of HTTP transports with different validation modes
@@ -63,11 +64,12 @@ type transportFactory struct {
 }
 
 func (tf *transportConfig) String() string {
-	return fmt.Sprintf("{MaxIdleConns: %d, IdleConnTimeout: %s, DialTimeout: %s, KeepAlive: %s}",
+	return fmt.Sprintf("{MaxIdleConns: %d, IdleConnTimeout: %s, DialTimeout: %s, KeepAlive: %s, TLSHandshakeTimeout: %s}",
 		tf.MaxIdleConns,
 		tf.IdleConnTimeout,
 		tf.DialTimeout,
-		tf.KeepAlive)
+		tf.KeepAlive,
+		tf.TLSHandshakeTimeout)
 }
 
 // NewTransportFactory creates a new transport factory
@@ -122,6 +124,10 @@ func (tf *transportFactory) createBaseTransport(transportConfig *transportConfig
 		MaxIdleConns:        cmp.Or(transportConfig.MaxIdleConns, defaultTransport.MaxIdleConns),
 		MaxIdleConnsPerHost: cmp.Or(transportConfig.MaxIdleConns, defaultTransport.MaxIdleConns),
 		IdleConnTimeout:     cmp.Or(transportConfig.IdleConnTimeout, defaultTransport.IdleConnTimeout),
+		// DialTimeout covers only the TCP connect. net/http runs the dial detached from the
+		// request context, so a server that never answers the TLS ClientHello holds the dial,
+		// and any request waiting for it, until this timer fires.
+		TLSHandshakeTimeout: cmp.Or(transportConfig.TLSHandshakeTimeout, defaultTransport.TLSHandshakeTimeout),
 		Proxy:               tf.createProxy(transportConfig),
 		DialContext:         dialer.DialContext,
 	}
