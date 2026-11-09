@@ -2,7 +2,7 @@ package gosnowflake
 
 import (
 	"fmt"
-	"github.com/snowflakedb/gosnowflake/v2/internal/errors"
+	"github.com/observeinc/gosnowflake/v2/internal/errors"
 	"strconv"
 	"sync"
 	"time"

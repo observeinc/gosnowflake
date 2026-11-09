@@ -3,7 +3,7 @@ package config
 import (
 	"strings"
 
-	sferrors "github.com/snowflakedb/gosnowflake/v2/internal/errors"
+	sferrors "github.com/observeinc/gosnowflake/v2/internal/errors"
 )
 
 // Account and region are concatenated into the driver-derived hostname

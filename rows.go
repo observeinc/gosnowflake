@@ -3,16 +3,16 @@ package gosnowflake
 import (
 	"context"
 	"database/sql/driver"
-	"github.com/snowflakedb/gosnowflake/v2/internal/errors"
+	"github.com/observeinc/gosnowflake/v2/internal/errors"
 	"io"
 	"reflect"
 	"strings"
 	"time"
 
 	"github.com/apache/arrow-go/v18/arrow"
-	ia "github.com/snowflakedb/gosnowflake/v2/internal/arrow"
-	"github.com/snowflakedb/gosnowflake/v2/internal/query"
-	"github.com/snowflakedb/gosnowflake/v2/internal/types"
+	ia "github.com/observeinc/gosnowflake/v2/internal/arrow"
+	"github.com/observeinc/gosnowflake/v2/internal/query"
+	"github.com/observeinc/gosnowflake/v2/internal/types"
 )
 
 const (
@@ -42,7 +42,8 @@ type SnowflakeRows interface {
 
 type snowflakeRows struct {
 	sc                  *snowflakeConn
-	ChunkDownloader     chunkDownloader
+	ChunkDownloader     chunkDownloader `json:"-"`
+	execResp            *execResponse
 	tailChunkDownloader chunkDownloader
 	queryID             string
 	status              QueryStatus

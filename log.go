@@ -1,8 +1,8 @@
 package gosnowflake
 
 import (
-	loggerinternal "github.com/snowflakedb/gosnowflake/v2/internal/logger"
-	"github.com/snowflakedb/gosnowflake/v2/sflog"
+	loggerinternal "github.com/observeinc/gosnowflake/v2/internal/logger"
+	"github.com/observeinc/gosnowflake/v2/sflog"
 )
 
 // SFSessionIDKey is context key of session id
@@ -13,7 +13,7 @@ const SFSessionUserKey ContextKey = "LOG_USER"
 
 func init() {
 	// Set default log keys in internal package
-	SetLogKeys(SFSessionIDKey, SFSessionUserKey)
+	SetLogKeys(SFSessionIDKey, SFSessionUserKey, snowflakeRequestIDKey)
 }
 
 // Re-export types from sflog package for backward compatibility

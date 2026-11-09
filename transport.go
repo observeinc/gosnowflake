@@ -6,7 +6,7 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
-	sfconfig "github.com/snowflakedb/gosnowflake/v2/internal/config"
+	sfconfig "github.com/observeinc/gosnowflake/v2/internal/config"
 	"net"
 	"net/http"
 	"net/url"
@@ -34,13 +34,29 @@ const (
 
 var defaultTransportConfigs transportConfigs = newDefaultTransportConfigs()
 
+// TransportWrapper wraps the transport created by the driver, if non-nil.
+// It is applied after OCSP/CRL/TLS configuration so all certificate revocation
+// behaviour is preserved. Must be set before any connections are opened.
+// It is not applied when Config.Transporter is set, since in that case the
+// caller owns the full transport stack.
+var TransportWrapper func(http.RoundTripper) http.RoundTripper
+
+// wrapTransport applies TransportWrapper to rt if it is set and err is nil.
+func wrapTransport(rt http.RoundTripper, err error) (http.RoundTripper, error) {
+	if err != nil || TransportWrapper == nil {
+		return rt, err
+	}
+	return TransportWrapper(rt), nil
+}
+
 // transportConfig holds the configuration for creating HTTP transports
 type transportConfig struct {
-	MaxIdleConns    int
-	IdleConnTimeout time.Duration
-	DialTimeout     time.Duration
-	KeepAlive       time.Duration
-	DisableProxy    bool
+	MaxIdleConns        int
+	IdleConnTimeout     time.Duration
+	DialTimeout         time.Duration
+	KeepAlive           time.Duration
+	TLSHandshakeTimeout time.Duration
+	DisableProxy        bool
 }
 
 // TransportFactory handles creation of HTTP transports with different validation modes
@@ -50,11 +66,12 @@ type transportFactory struct {
 }
 
 func (tf *transportConfig) String() string {
-	return fmt.Sprintf("{MaxIdleConns: %d, IdleConnTimeout: %s, DialTimeout: %s, KeepAlive: %s}",
+	return fmt.Sprintf("{MaxIdleConns: %d, IdleConnTimeout: %s, DialTimeout: %s, KeepAlive: %s, TLSHandshakeTimeout: %s}",
 		tf.MaxIdleConns,
 		tf.IdleConnTimeout,
 		tf.DialTimeout,
-		tf.KeepAlive)
+		tf.KeepAlive,
+		tf.TLSHandshakeTimeout)
 }
 
 // NewTransportFactory creates a new transport factory
@@ -121,6 +138,10 @@ func (tf *transportFactory) createBaseTransport(transportConfig *transportConfig
 		MaxIdleConns:        cmp.Or(transportConfig.MaxIdleConns, defaultTransport.MaxIdleConns),
 		MaxIdleConnsPerHost: cmp.Or(transportConfig.MaxIdleConns, defaultTransport.MaxIdleConns),
 		IdleConnTimeout:     cmp.Or(transportConfig.IdleConnTimeout, defaultTransport.IdleConnTimeout),
+		// DialTimeout covers only the TCP connect. net/http runs the dial detached from the
+		// request context, so a server that never answers the TLS ClientHello holds the dial,
+		// and any request waiting for it, until this timer fires.
+		TLSHandshakeTimeout: cmp.Or(transportConfig.TLSHandshakeTimeout, defaultTransport.TLSHandshakeTimeout),
 		Proxy:               tf.createProxy(transportConfig),
 		DialContext:         dialer.DialContext,
 	}, nil
@@ -176,7 +197,7 @@ func (tf *transportFactory) createTransport(transportConfig *transportConfig) (h
 	if tf.config == nil {
 		// should never happen in production, only in tests
 		logger.Warn("createTransport: got nil Config, using default one")
-		return tf.createNoRevocationTransport(transportConfig)
+		return wrapTransport(tf.createNoRevocationTransport(transportConfig))
 	}
 
 	// if user configured a custom Transporter, prioritize that
@@ -217,7 +238,7 @@ func (tf *transportFactory) createTransport(transportConfig *transportConfig) (h
 			}
 		}
 
-		return tf.createBaseTransport(transportConfig, tlsConfig)
+		return wrapTransport(tf.createBaseTransport(transportConfig, tlsConfig))
 	}
 
 	// Handle no revocation checking path
@@ -231,13 +252,13 @@ func (tf *transportFactory) createTransport(transportConfig *transportConfig) (h
 		// so here config is non-nil and Transporter is nil. GetTLSConfig returns
 		// a clone, so it is safe to use directly.
 		if tlsConfig, ok := sfconfig.GetTLSConfig(tf.config.TLSConfigName); ok && tlsConfig != nil {
-			return tf.createBaseTransport(transportConfig, tlsConfig)
+			return wrapTransport(tf.createBaseTransport(transportConfig, tlsConfig))
 		}
-		return tf.createNoRevocationTransport(transportConfig)
+		return wrapTransport(tf.createNoRevocationTransport(transportConfig))
 	}
 
 	logger.Debug("createTransport: will perform OCSP validation")
-	return tf.createOCSPTransport(transportConfig)
+	return wrapTransport(tf.createOCSPTransport(transportConfig))
 }
 
 // validateRevocationConfig checks for conflicting revocation settings

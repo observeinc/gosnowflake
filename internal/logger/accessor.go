@@ -5,7 +5,7 @@ import (
 	"log"
 	"sync/atomic"
 
-	"github.com/snowflakedb/gosnowflake/v2/sflog"
+	"github.com/observeinc/gosnowflake/v2/sflog"
 )
 
 // globalLogger is the actual logger that provides all features (secret masking, level filtering, etc.).

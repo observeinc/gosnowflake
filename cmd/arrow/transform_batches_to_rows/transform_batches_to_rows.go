@@ -9,8 +9,8 @@ import (
 	"io"
 	"log"
 
-	sf "github.com/snowflakedb/gosnowflake/v2"
-	"github.com/snowflakedb/gosnowflake/v2/arrowbatches"
+	sf "github.com/observeinc/gosnowflake/v2"
+	"github.com/observeinc/gosnowflake/v2/arrowbatches"
 )
 
 func main() {

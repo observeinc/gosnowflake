@@ -8,8 +8,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/snowflakedb/gosnowflake/v2/internal/logger"
-	"github.com/snowflakedb/gosnowflake/v2/sflog"
+	"github.com/observeinc/gosnowflake/v2/internal/logger"
+	"github.com/observeinc/gosnowflake/v2/sflog"
 )
 
 // TestLoggerConfiguration verifies configuration methods work

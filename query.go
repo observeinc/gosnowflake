@@ -2,7 +2,7 @@ package gosnowflake
 
 import (
 	"encoding/json"
-	"github.com/snowflakedb/gosnowflake/v2/internal/query"
+	"github.com/observeinc/gosnowflake/v2/internal/query"
 	"time"
 )
 
@@ -78,7 +78,7 @@ type execResponseData struct {
 	Parameters         []nameValueParameter        `json:"parameters,omitempty"`
 	RowType            []query.ExecResponseRowType `json:"rowtype,omitempty"`
 	RowSet             [][]*string                 `json:"rowset,omitempty"`
-	RowSetBase64       string                      `json:"rowsetbase64,omitempty"`
+	RowSetBase64       string                      `json:"rowsetBase64,omitempty"`
 	Total              int64                       `json:"total,omitempty"`    // java:long
 	Returned           int64                       `json:"returned,omitempty"` // java:long
 	QueryID            string                      `json:"queryId,omitempty"`
@@ -128,8 +128,9 @@ type execResponseData struct {
 	QueryContext json.RawMessage `json:"queryContext,omitempty"`
 }
 
+//easyjson:json
 type execResponse struct {
-	Data    execResponseData `json:"Data"`
+	Data    execResponseData `json:"data"`
 	Message string           `json:"message"`
 	Code    string           `json:"code"`
 	Success bool             `json:"success"`

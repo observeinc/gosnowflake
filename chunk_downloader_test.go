@@ -14,8 +14,8 @@ import (
 	"github.com/apache/arrow-go/v18/arrow/array"
 	"github.com/apache/arrow-go/v18/arrow/ipc"
 	"github.com/apache/arrow-go/v18/arrow/memory"
-	ia "github.com/snowflakedb/gosnowflake/v2/internal/arrow"
-	"github.com/snowflakedb/gosnowflake/v2/internal/query"
+	ia "github.com/observeinc/gosnowflake/v2/internal/arrow"
+	"github.com/observeinc/gosnowflake/v2/internal/query"
 )
 
 func newCancelableTestChunkDownloader(ctx context.Context, body io.ReadCloser) *snowflakeChunkDownloader {

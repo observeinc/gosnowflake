@@ -10,7 +10,7 @@ import (
 	"log"
 	"time"
 
-	sf "github.com/snowflakedb/gosnowflake/v2"
+	sf "github.com/observeinc/gosnowflake/v2"
 )
 
 func runQuery(db *sql.DB, query string) {

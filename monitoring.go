@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/snowflakedb/gosnowflake/v2/internal/errors"
+	"github.com/observeinc/gosnowflake/v2/internal/errors"
 )
 
 const urlQueriesResultFmt = "/queries/%s/result"

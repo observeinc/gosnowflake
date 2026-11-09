@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/snowflakedb/gosnowflake/v2/sflog"
+	"github.com/observeinc/gosnowflake/v2/sflog"
 	"io"
 	"log/slog"
 	"maps"
@@ -13,7 +13,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/snowflakedb/gosnowflake/v2"
+	"github.com/observeinc/gosnowflake/v2"
 )
 
 // customLogger is a simple implementation of gosnowflake.SFLogger for testing

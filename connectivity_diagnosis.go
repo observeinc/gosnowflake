@@ -7,7 +7,7 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	sfconfig "github.com/snowflakedb/gosnowflake/v2/internal/config"
+	sfconfig "github.com/observeinc/gosnowflake/v2/internal/config"
 	"io"
 	"net"
 	"net/http"

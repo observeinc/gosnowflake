@@ -12,8 +12,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	sfconfig "github.com/snowflakedb/gosnowflake/v2/internal/config"
-	sferrors "github.com/snowflakedb/gosnowflake/v2/internal/errors"
+	sfconfig "github.com/observeinc/gosnowflake/v2/internal/config"
+	sferrors "github.com/observeinc/gosnowflake/v2/internal/errors"
 	"io"
 	"math/big"
 	"net/http"
@@ -1092,7 +1092,7 @@ func extractOCSPCacheResponseValue(certIDKey *certIDKey, certCacheValue *certCac
 		ocspResponse, err = ocsp.ParseResponse(b, issuer)
 	}
 	if err != nil {
-		logger.Warnf("the second cache element is not a valid OCSP Response. Ignored. subject: %v\n", subjectName)
+		logger.Infof("the second cache element is not a valid OCSP Response. Ignored. subject: %v\n", subjectName)
 		return &ocspStatus{
 			code: ocspFailedParseResponse,
 			err:  fmt.Errorf("failed to parse OCSP Respose. subject: %v, err: %v", subjectName, err),

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"testing"
 
-	sfconfig "github.com/snowflakedb/gosnowflake/v2/internal/config"
+	sfconfig "github.com/observeinc/gosnowflake/v2/internal/config"
 )
 
 func TestTransportFactoryErrorHandling(t *testing.T) {

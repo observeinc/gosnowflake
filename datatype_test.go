@@ -3,8 +3,8 @@ package gosnowflake
 import (
 	"database/sql/driver"
 	"fmt"
-	"github.com/snowflakedb/gosnowflake/v2/internal/errors"
-	"github.com/snowflakedb/gosnowflake/v2/internal/types"
+	"github.com/observeinc/gosnowflake/v2/internal/errors"
+	"github.com/observeinc/gosnowflake/v2/internal/types"
 	"testing"
 )
 

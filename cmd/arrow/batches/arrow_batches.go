@@ -14,8 +14,8 @@ import (
 	"github.com/apache/arrow-go/v18/arrow/array"
 	"github.com/apache/arrow-go/v18/arrow/memory"
 
-	sf "github.com/snowflakedb/gosnowflake/v2"
-	"github.com/snowflakedb/gosnowflake/v2/arrowbatches"
+	sf "github.com/observeinc/gosnowflake/v2"
+	"github.com/observeinc/gosnowflake/v2/arrowbatches"
 )
 
 type sampleRecord struct {

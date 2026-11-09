@@ -2,6 +2,9 @@
 #
 # Build and Test Golang driver
 #
+# Usage: execute_tests.sh [TEST_NAME]
+#   TEST_NAME: Optional test name pattern to pass to -run flag
+#
 set -e
 set -o pipefail
 CI_SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -10,6 +13,12 @@ eval $(jq -r '.testconnection | to_entries | map("export \(.key)=\(.value|tostri
 env | grep SNOWFLAKE | grep -v PASS | grep -v SECRET | sort
 cd $TOPDIR
 go install github.com/jstemmer/go-junit-report/v2@latest
+
+# Parse optional test name argument
+TEST_RUN_FLAG=""
+if [[ -n "$1" ]]; then
+  TEST_RUN_FLAG="-run $1"
+fi
 
 if [[ "$HOME_EMPTY" == "yes" ]] ; then
   export GOCACHE=$HOME/go-build
@@ -28,14 +37,14 @@ if [[ "$SEQUENTIAL_TESTS" == "true" ]] ; then
     (
       for pkg in $PACKAGES; do
         # Convert full package path to relative path
-        pkg_path=$(echo $pkg | sed "s|^github.com/snowflakedb/gosnowflake/v2||" | sed "s|^/||")
+        pkg_path=$(echo $pkg | sed "s|^github.com/observeinc/gosnowflake/v2||" | sed "s|^/||")
         if [[ -z "$pkg_path" ]]; then
           pkg_path="."
         else
           pkg_path="./$pkg_path"
         fi
         echo "=== Testing package: $pkg_path ===" >&2
-        GODEBUG=$TEST_GO_DEBUG go test $GO_TEST_PARAMS -timeout 90m -race -v "$pkg_path"
+        GODEBUG=$TEST_GO_DEBUG go test $GO_TEST_PARAMS $TEST_RUN_FLAG -timeout 90m -race -v "$pkg_path"
       done
     ) | /home/user/go/bin/go-junit-report -iocopy -out $WORKSPACE/junit-go.xml
   else
@@ -43,7 +52,7 @@ if [[ "$SEQUENTIAL_TESTS" == "true" ]] ; then
     FAILED=0
     (
       for pkg in $PACKAGES; do
-        pkg_path=$(echo $pkg | sed "s|^github.com/snowflakedb/gosnowflake/v2||" | sed "s|^/||")
+        pkg_path=$(echo $pkg | sed "s|^github.com/observeinc/gosnowflake/v2||" | sed "s|^/||")
         if [[ -z "$pkg_path" ]]; then
           pkg_path="."
         else
@@ -51,7 +60,7 @@ if [[ "$SEQUENTIAL_TESTS" == "true" ]] ; then
         fi
         echo "=== Testing package: $pkg_path ===" >&2
         # Note: -coverprofile only works with single package, use -coverpkg for multiple
-        GODEBUG=$TEST_GO_DEBUG go test $GO_TEST_PARAMS -timeout 90m -race -coverpkg="$COVPKGS" -coverprofile="${pkg_path//\//_}_coverage.txt" -covermode=atomic -v "$pkg_path"
+        GODEBUG=$TEST_GO_DEBUG go test $GO_TEST_PARAMS $TEST_RUN_FLAG -timeout 90m -race -coverpkg="$COVPKGS" -coverprofile="${pkg_path//\//_}_coverage.txt" -covermode=atomic -v "$pkg_path"
         if [[ $? -ne 0 ]]; then
           FAILED=1
           echo "[ERROR] Package $pkg_path tests failed" >&2
@@ -71,10 +80,10 @@ else
   # Test all packages with ./... (parallel, faster, but buffered per package)
   if [[ -n "$JENKINS_HOME" ]]; then
     export WORKSPACE=${WORKSPACE:-/mnt/workspace}
-    GODEBUG=$TEST_GO_DEBUG go test $GO_TEST_PARAMS -timeout 90m -race -v ./... | /home/user/go/bin/go-junit-report -iocopy -out $WORKSPACE/junit-go.xml
+    GODEBUG=$TEST_GO_DEBUG go test $GO_TEST_PARAMS $TEST_RUN_FLAG -timeout 90m -race -v ./... | /home/user/go/bin/go-junit-report -iocopy -out $WORKSPACE/junit-go.xml
   else
     set +e
-    GODEBUG=$TEST_GO_DEBUG go test $GO_TEST_PARAMS -timeout 90m -race -coverpkg="$COVPKGS" -coverprofile=coverage.txt -covermode=atomic -v ./... | tee test-output.txt
+    GODEBUG=$TEST_GO_DEBUG go test $GO_TEST_PARAMS $TEST_RUN_FLAG -timeout 90m -race -coverpkg="$COVPKGS" -coverprofile=coverage.txt -covermode=atomic -v ./... | tee test-output.txt
     TEST_EXIT_CODE=${PIPESTATUS[0]}
     cat test-output.txt | go-junit-report > test-report.junit.xml
     exit $TEST_EXIT_CODE

@@ -6,7 +6,7 @@ Clients can use the database/sql package directly. For example:
 	import (
 		"database/sql"
 
-		_ "github.com/snowflakedb/gosnowflake/v2"
+		_ "github.com/observeinc/gosnowflake/v2"
 
 		"log"
 	)
@@ -353,7 +353,7 @@ Users can customize logging in two ways:
 		import (
 			"log/slog"
 	        "os"
-			sf "github.com/snowflakedb/gosnowflake/v2"
+			sf "github.com/observeinc/gosnowflake/v2"
 		)
 
 		// Create your custom handler
@@ -389,7 +389,7 @@ If you want to define S3 client logging, override S3LoggingMode variable using c
 Example:
 
 	    import (
-	      sf "github.com/snowflakedb/gosnowflake/v2"
+	      sf "github.com/observeinc/gosnowflake/v2"
 	      "github.com/aws/aws-sdk-go-v2/aws"
 	    )
 
@@ -1100,7 +1100,7 @@ any subsequent time.Time type to the DATE, TIME, TIMESTAMP_LTZ, TIMESTAMP_NTZ
 or BINARY data type. The above example could be rewritten as follows:
 
 	import (
-		sf "github.com/snowflakedb/gosnowflake/v2"
+		sf "github.com/observeinc/gosnowflake/v2"
 	)
 	dbt.mustExec("CREATE OR REPLACE TABLE tztest (id int, ntz, timestamp_ntz, ltz timestamp_ltz)")
 	// ...
@@ -1391,7 +1391,7 @@ and before retrieving the results. For a more elaborative example please see cmd
 			"fmt"
 			"log"
 			"os"
-			sf "github.com/snowflakedb/gosnowflake/v2"
+			sf "github.com/observeinc/gosnowflake/v2"
 	    )
 
 		...

@@ -3,12 +3,12 @@ package arrowbatches
 import (
 	"cmp"
 	"context"
-	"github.com/snowflakedb/gosnowflake/v2/internal/query"
-	"github.com/snowflakedb/gosnowflake/v2/internal/types"
+	"github.com/observeinc/gosnowflake/v2/internal/query"
+	"github.com/observeinc/gosnowflake/v2/internal/types"
 	"time"
 
-	sf "github.com/snowflakedb/gosnowflake/v2"
-	ia "github.com/snowflakedb/gosnowflake/v2/internal/arrow"
+	sf "github.com/observeinc/gosnowflake/v2"
+	ia "github.com/observeinc/gosnowflake/v2/internal/arrow"
 
 	"github.com/apache/arrow-go/v18/arrow"
 	"github.com/apache/arrow-go/v18/arrow/memory"

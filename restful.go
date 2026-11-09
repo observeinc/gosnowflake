@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	errors2 "github.com/snowflakedb/gosnowflake/v2/internal/errors"
+	errors2 "github.com/observeinc/gosnowflake/v2/internal/errors"
 	"io"
 	"net/http"
 	"net/url"
@@ -21,6 +21,11 @@ const (
 	headerContentTypeApplicationJSON     = "application/json"
 	headerAcceptTypeApplicationSnowflake = "application/snowflake"
 )
+
+// cancelQueryTimeout bounds the cancel request sent after a query's context is done.
+// Without it the cancel request, including its retries, is bounded only by the client
+// timeout and keeps the caller waiting long after its own deadline.
+var cancelQueryTimeout = 30 * time.Second
 
 // Snowflake Server Endpoints
 const (
@@ -223,8 +228,11 @@ func postRestfulQuery(
 				}
 			}()
 		} else {
-			// Legacy behavior: synchronous, unbounded cleanup on the caller's goroutine.
-			if cancelErr := sr.FuncCancelQuery(context.Background(), sr, requestID, timeout); cancelErr != nil {
+			// Legacy behavior: synchronous cleanup on the caller's goroutine. ctx is already
+			// done, so the cancel request gets its own context, bounded by cancelQueryTimeout.
+			cancelCtx, cancel := context.WithTimeout(context.Background(), cancelQueryTimeout)
+			defer cancel()
+			if cancelErr := sr.FuncCancelQuery(cancelCtx, sr, requestID, timeout); cancelErr != nil {
 				// Wrap the original error with the cancel error.
 				err = fmt.Errorf("failed to cancel query. cancelErr: %w, queryErr: %w", cancelErr, err)
 			}
@@ -268,7 +276,7 @@ func postRestfulQueryHelper(
 
 	if resp.StatusCode == http.StatusOK {
 		respd := &execResponse{}
-		if err = decodeJSONBody(resp.Body, respd); err != nil {
+		if err = decodeResponse(resp.Body, respd); err != nil {
 			if errors.Is(err, io.ErrUnexpectedEOF) && ctx.Value(truncatedResponseRetry) == nil {
 				logger.WithContext(ctx).Warnf("incomplete response body, retrying query %v: %v", requestID, err)
 				if closeErr := resp.Body.Close(); closeErr != nil {
@@ -361,7 +369,7 @@ func closeSession(ctx context.Context, sr *snowflakeRestful, timeout time.Durati
 	}()
 	if resp.StatusCode == http.StatusOK {
 		var respd renewSessionResponse
-		if err = json.NewDecoder(resp.Body).Decode(&respd); err != nil {
+		if err = decodeResponse(resp.Body, &respd); err != nil {
 			logger.WithContext(ctx).Errorf("failed to decode JSON. err: %v", err)
 			return err
 		}
@@ -425,7 +433,7 @@ func renewRestfulSession(ctx context.Context, sr *snowflakeRestful, timeout time
 	}()
 	if resp.StatusCode == http.StatusOK {
 		var respd renewSessionResponse
-		err = json.NewDecoder(resp.Body).Decode(&respd)
+		err = decodeResponse(resp.Body, &respd)
 		if err != nil {
 			logger.WithContext(ctx).Errorf("failed to decode JSON. err: %v", err)
 			return err
@@ -502,7 +510,7 @@ func cancelQuery(ctx context.Context, sr *snowflakeRestful, requestID UUID, time
 	}()
 	if resp.StatusCode == http.StatusOK {
 		var respd cancelQueryResponse
-		if err = json.NewDecoder(resp.Body).Decode(&respd); err != nil {
+		if err = decodeResponse(resp.Body, &respd); err != nil {
 			logger.WithContext(ctx).Errorf("failed to decode JSON. err: %v", err)
 			return err
 		}
@@ -580,7 +588,7 @@ func getExecResponse(
 
 	// decode response and fill into an empty execResponse
 	respd := &execResponse{}
-	err = decodeJSONBody(resp.Body, respd)
+	err = decodeResponse(resp.Body, respd)
 	if err != nil {
 		logger.WithContext(ctx).Errorf("failed to decode JSON. err: %v", err)
 		return nil, err

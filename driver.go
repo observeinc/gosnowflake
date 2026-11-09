@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"database/sql/driver"
-	sfconfig "github.com/snowflakedb/gosnowflake/v2/internal/config"
+	sfconfig "github.com/observeinc/gosnowflake/v2/internal/config"
 	"os"
 	"strconv"
 	"strings"

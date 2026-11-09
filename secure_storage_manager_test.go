@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	sfconfig "github.com/snowflakedb/gosnowflake/v2/internal/config"
+	sfconfig "github.com/observeinc/gosnowflake/v2/internal/config"
 )
 
 func TestBuildCredCacheDirPath(t *testing.T) {

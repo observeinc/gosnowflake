@@ -322,11 +322,11 @@ func TestBindingInterface(t *testing.T) {
 			assertNilF(t, rows.Close())
 		}()
 		if !rows.Next() {
-			dbt.Error("failed to query")
+			dbt.Fatal("failed to query")
 		}
 		var v1, v2, v2a, v3, v4, v5, v6 any
 		if err := rows.Scan(&v1, &v2, &v2a, &v3, &v4, &v5, &v6); err != nil {
-			dbt.Errorf("failed to scan: %#v", err)
+			dbt.Fatalf("failed to scan: %#v", err)
 		}
 		if s1, ok := v1.(*big.Float); !ok || s1.Cmp(big.NewFloat(1.0)) != 0 {
 			dbt.Fatalf("failed to fetch. ok: %v, value: %v", ok, v1)
@@ -353,11 +353,11 @@ func TestBindingInterfaceString(t *testing.T) {
 			assertNilF(t, rows.Close())
 		}()
 		if !rows.Next() {
-			dbt.Error("failed to query")
+			dbt.Fatal("failed to query")
 		}
 		var v1, v2, v2a, v3, v4, v5, v6 any
 		if err := rows.Scan(&v1, &v2, &v2a, &v3, &v4, &v5, &v6); err != nil {
-			dbt.Errorf("failed to scan: %#v", err)
+			dbt.Fatalf("failed to scan: %#v", err)
 		}
 		if s, ok := v1.(string); !ok {
 			dbt.Error("failed to convert to string")
@@ -750,7 +750,7 @@ func testBindingArray(t *testing.T, bulk bool) {
 		defer dbt.mustExec(deleteTableSQL)
 		if bulk {
 			if _, err := dbt.exec("ALTER SESSION SET CLIENT_STAGE_ARRAY_BINDING_THRESHOLD = 1"); err != nil {
-				t.Error(err)
+				t.Skip("CLIENT_STAGE_ARRAY_BINDING_THRESHOLD is not available in this environment")
 			}
 		}
 
@@ -1530,6 +1530,10 @@ func testLOBRetrieval(t *testing.T, useArrowFormat bool) {
 			t.Run(fmt.Sprintf("testLOB_%v_useArrowFormat=%v", strconv.Itoa(testSize), strconv.FormatBool(useArrowFormat)), func(t *testing.T) {
 				var res string
 				rows, err := dbt.query(fmt.Sprintf("SELECT randstr(%v, 124)", testSize))
+				if testSize > ResponseBodyLimit {
+					assertEqualF(t, err, ErrResponseTooLarge)
+					return
+				}
 				assertNilF(t, err)
 				defer func() {
 					assertNilF(t, rows.Close())

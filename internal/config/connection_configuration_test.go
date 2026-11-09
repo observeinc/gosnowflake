@@ -15,8 +15,8 @@ import (
 	"testing"
 	"time"
 
-	sferrors "github.com/snowflakedb/gosnowflake/v2/internal/errors"
-	sflogger "github.com/snowflakedb/gosnowflake/v2/internal/logger"
+	sferrors "github.com/observeinc/gosnowflake/v2/internal/errors"
+	sflogger "github.com/observeinc/gosnowflake/v2/internal/logger"
 )
 
 func TestTokenFilePermission(t *testing.T) {

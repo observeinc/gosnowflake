@@ -5,7 +5,7 @@ import (
 	"sync"
 	"testing"
 
-	sfconfig "github.com/snowflakedb/gosnowflake/v2/internal/config"
+	sfconfig "github.com/observeinc/gosnowflake/v2/internal/config"
 )
 
 // newTestShapeConn returns a snowflakeConn with an enabled in-memory telemetry

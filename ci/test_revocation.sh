@@ -28,7 +28,7 @@ fi
 cd "$REVOCATION_DIR"
 
 # Point the framework at the local Go driver checkout
-go mod edit -replace "github.com/snowflakedb/gosnowflake/v2=${DRIVER_DIR}"
+go mod edit -replace "github.com/observeinc/gosnowflake/v2=${DRIVER_DIR}"
 go mod tidy
 echo "[Info] Replaced gosnowflake module with local checkout: $DRIVER_DIR"
 

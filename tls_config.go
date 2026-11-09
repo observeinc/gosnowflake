@@ -3,7 +3,7 @@ package gosnowflake
 import (
 	"crypto/tls"
 
-	sfconfig "github.com/snowflakedb/gosnowflake/v2/internal/config"
+	sfconfig "github.com/observeinc/gosnowflake/v2/internal/config"
 )
 
 // RegisterTLSConfig registers a custom tls.Config to be used with sql.Open.

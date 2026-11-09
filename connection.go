@@ -15,10 +15,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	sfconfig "github.com/snowflakedb/gosnowflake/v2/internal/config"
-	"github.com/snowflakedb/gosnowflake/v2/internal/errors"
+	sfconfig "github.com/observeinc/gosnowflake/v2/internal/config"
+	"github.com/observeinc/gosnowflake/v2/internal/errors"
 
-	ia "github.com/snowflakedb/gosnowflake/v2/internal/arrow"
+	ia "github.com/observeinc/gosnowflake/v2/internal/arrow"
 	"go.opentelemetry.io/otel/propagation"
 )
 
@@ -386,6 +386,7 @@ func (sc *snowflakeConn) ExecContext(
 		logger.WithContext(ctx).Debugf("number of updated rows: %#v", updatedRows)
 		return &snowflakeResult{
 			affectedRows: updatedRows,
+			execResp:     data,
 			insertID:     -1,
 			queryID:      data.Data.QueryID,
 		}, nil // last insert id is not supported by Snowflake
@@ -466,21 +467,30 @@ func (sc *snowflakeConn) queryContextInternal(
 		return data.Data.AsyncRows, nil
 	}
 
+	downloadResults := true
+	if strings.HasPrefix(query, "/*NODOWNLOAD*/") {
+		downloadResults = false
+	}
+
 	rows := new(snowflakeRows)
+	rows.execResp = data
 	rows.sc = sc
 	rows.queryID = data.Data.QueryID
 	rows.ctx = ctx
 
-	if isMultiStmt(&data.Data) {
-		// handleMultiQuery is responsible to fill rows with childResults
-		if err = sc.handleMultiQuery(ctx, data.Data, rows); err != nil {
-			return nil, err
+	if downloadResults {
+		if isMultiStmt(&data.Data) {
+			// handleMultiQuery is responsible to fill rows with childResults
+			if err = sc.handleMultiQuery(ctx, data.Data, rows); err != nil {
+				return nil, err
+			}
+		} else {
+			rows.addDownloader(populateChunkDownloader(ctx, sc, data.Data))
 		}
-	} else {
-		rows.addDownloader(populateChunkDownloader(ctx, sc, data.Data))
+
+		err = rows.ChunkDownloader.start()
 	}
 
-	err = rows.ChunkDownloader.start()
 	return rows, err
 }
 

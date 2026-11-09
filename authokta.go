@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/snowflakedb/gosnowflake/v2/internal/errors"
+	"github.com/observeinc/gosnowflake/v2/internal/errors"
 	"html"
 	"io"
 	"net/http"
