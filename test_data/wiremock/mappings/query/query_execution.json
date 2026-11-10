@@ -24,7 +24,7 @@
                 {"name": "SUM(C1)", "type": "number"}
               ]
             },
-            "rowType": [
+            "rowtype": [
               {"name": "MS", "type": "FIXED", "length": 10, "precision": 38, "scale": 0},
               {"name": "SUM(C1)", "type": "FIXED", "length": 10, "precision": 38, "scale": 0}
             ],
@@ -59,7 +59,7 @@
                 {"name": "SUM(C1)", "type": "number"}
               ]
             },
-            "rowType": [
+            "rowtype": [
               {"name": "MS", "type": "FIXED", "length": 10, "precision": 38, "scale": 0},
               {"name": "SUM(C1)", "type": "FIXED", "length": 10, "precision": 38, "scale": 0}
             ],
