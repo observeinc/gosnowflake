@@ -5,7 +5,6 @@ import (
 	"net"
 	"net/http"
 	"net/url"
-	"strconv"
 	"sync"
 	"testing"
 	"time"
@@ -68,46 +67,11 @@ func TestTLSHandshakeTimeoutEndsSilentServer(t *testing.T) {
 	assertTrueE(t, time.Since(start) < 5*time.Second, "handshake was not bounded")
 }
 
-func TestPostRestfulQueryBoundsCancelRequest(t *testing.T) {
-	origTimeout := cancelQueryTimeout
-	cancelQueryTimeout = 50 * time.Millisecond
-	defer func() { cancelQueryTimeout = origTimeout }()
-
-	var cancelCtxErr error
-	var cancelCtxHasDeadline bool
-	sr := &snowflakeRestful{
-		FuncPostQueryHelper: func(context.Context, *snowflakeRestful, *url.Values, map[string]string, []byte, time.Duration, UUID, *Config) (*execResponse, error) {
-			return nil, context.Canceled
-		},
-		FuncCancelQuery: func(ctx context.Context, _ *snowflakeRestful, _ UUID, _ time.Duration) error {
-			cancelCtxErr = ctx.Err()
-			_, cancelCtxHasDeadline = ctx.Deadline()
-			// A cancel request that never gets an answer.
-			<-ctx.Done()
-			return ctx.Err()
-		},
-		TokenAccessor: getSimpleTokenAccessor(),
-	}
-	queryCtx, cancelQueryCtx := context.WithCancel(context.Background())
-	cancelQueryCtx()
-
-	start := time.Now()
-	_, err := postRestfulQuery(queryCtx, sr, &url.Values{}, nil, nil, 0, NewUUID(), &Config{})
-	assertNilE(t, cancelCtxErr, "cancel request must not inherit the query's done context")
-	assertTrueE(t, cancelCtxHasDeadline, "cancel request must have a deadline")
-	assertTrueE(t, time.Since(start) < 5*time.Second, "cancel request was not bounded")
-	assertErrIsE(t, err, context.Canceled)
-	assertErrIsE(t, err, context.DeadlineExceeded)
-}
-
 // TestPostRestfulQueryCancelAgainstSilentServer reproduces a stuck cancel request: the
 // cancel needs a new connection, the TLS handshake for it never completes, and the
-// request waits for that connection.
+// request waits for that connection. With CleanupTimeout set, the caller returns at
+// once and the abort itself ends within the timeout.
 func TestPostRestfulQueryCancelAgainstSilentServer(t *testing.T) {
-	origTimeout := cancelQueryTimeout
-	cancelQueryTimeout = 300 * time.Millisecond
-	defer func() { cancelQueryTimeout = origTimeout }()
-
 	addr := startSilentServer(t)
 	tf := newTransportFactory(&Config{DisableOCSPChecks: true}, nil)
 	transport, err := tf.createBaseTransport(&transportConfig{}, nil)
@@ -120,15 +84,22 @@ func TestPostRestfulQueryCancelAgainstSilentServer(t *testing.T) {
 		FuncPostQueryHelper: func(context.Context, *snowflakeRestful, *url.Values, map[string]string, []byte, time.Duration, UUID, *Config) (*execResponse, error) {
 			return nil, context.DeadlineExceeded
 		},
-		FuncPost:        postRestful,
-		FuncCancelQuery: cancelQuery,
-		TokenAccessor:   getSimpleTokenAccessor(),
+		FuncPost:      postRestful,
+		TokenAccessor: getSimpleTokenAccessor(),
+	}
+	abortDone := make(chan struct{})
+	sr.FuncCancelQuery = func(ctx context.Context, sr *snowflakeRestful, requestID UUID, timeout time.Duration) error {
+		defer close(abortDone)
+		return cancelQuery(ctx, sr, requestID, timeout)
 	}
 
 	start := time.Now()
-	_, err = postRestfulQuery(context.Background(), sr, &url.Values{}, nil, nil, 0, NewUUID(), &Config{})
-	elapsed := time.Since(start)
-	assertNotNilF(t, err)
+	_, err = postRestfulQuery(context.Background(), sr, &url.Values{}, nil, nil, 0, NewUUID(), &Config{CleanupTimeout: 300 * time.Millisecond})
 	assertErrIsE(t, err, context.DeadlineExceeded)
-	assertTrueE(t, elapsed < 5*time.Second, "cancel request took "+strconv.FormatInt(elapsed.Milliseconds(), 10)+"ms")
+	assertTrueE(t, time.Since(start) < time.Second, "caller waited for the abort")
+	select {
+	case <-abortDone:
+	case <-time.After(5 * time.Second):
+		t.Fatal("abort request against a silent server did not end")
+	}
 }
