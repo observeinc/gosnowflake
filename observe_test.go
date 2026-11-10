@@ -57,6 +57,26 @@ func TestDecodeResponse(t *testing.T) {
 	}
 }
 
+func TestDecodeResponseRequiresRowTypeForRows(t *testing.T) {
+	for name, payload := range map[string]string{
+		"JSON rows":  `{"data":{"rowType":[{"name":"C1","type":"fixed"}],"rowset":[["1"]]},"success":true}`,
+		"Arrow rows": `{"data":{"rowType":[{"name":"C1","type":"fixed"}],"rowsetBase64":"AAAA"},"success":true}`,
+	} {
+		t.Run(name, func(t *testing.T) {
+			// easyjson matches "rowtype" exactly, so the misspelt key leaves RowType empty.
+			assertErrIsE(t, decodeResponse(body(payload), &execResponse{}), ErrResponseWithoutRowType)
+		})
+	}
+
+	resp := &execResponse{}
+	assertNilF(t, decodeResponse(body(`{"data":{"rowtype":[{"name":"C1","type":"fixed"}],"rowset":[["1"]]},"success":true}`), resp))
+	assertEqualE(t, len(resp.Data.RowType), 1)
+	assertEqualE(t, resp.Data.RowType[0].Name, "C1")
+
+	// Responses without rows, such as an async submit, need no row type.
+	assertNilE(t, decodeResponse(body(`{"data":{"queryId":"01-a"},"success":true}`), &execResponse{}))
+}
+
 func queryReturning(resp *execResponse) *snowflakeConn {
 	return &snowflakeConn{
 		cfg: &Config{},
