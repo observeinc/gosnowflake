@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"database/sql/driver"
+	"fmt"
 	"io"
 	"net/url"
 	"strings"
@@ -133,6 +134,21 @@ func TestStringToValueExports(t *testing.T) {
 	dest = nil
 	assertNilF(t, StringToValueWithContext(context.Background(), &dest, ExecResponseRowType{Name: "C2", Type: "text"}, strPtr("abc"), time.UTC, nil))
 	assertEqualE(t, dest, "abc")
+}
+
+// TestConfigureTelemetryHonorsDisableTelemetry: the server reports CLIENT_TELEMETRY_ENABLED=true
+// even when the client asked for false, so only DisableTelemetry can keep telemetry off.
+func TestConfigureTelemetryHonorsDisableTelemetry(t *testing.T) {
+	serverEnabled := "true"
+	for _, disable := range []bool{true, false} {
+		sc := &snowflakeConn{
+			cfg:        &Config{DisableTelemetry: disable},
+			telemetry:  &snowflakeTelemetry{},
+			syncParams: newSyncParams(map[string]*string{"client_telemetry_enabled": &serverEnabled}),
+		}
+		sc.configureTelemetry()
+		assertEqualE(t, sc.telemetry.enabled, !disable, fmt.Sprintf("DisableTelemetry=%v", disable))
+	}
 }
 
 func TestExecResponseRowTypeEqualsIgnoresFields(t *testing.T) {
