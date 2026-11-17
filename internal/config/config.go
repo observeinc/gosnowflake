@@ -74,8 +74,8 @@ type Config struct {
 	// DisableOCSPChecks or SF_DISABLE_OCSP_CHECKS is true. False (fail-closed)
 	// stays on unless DisableOCSPChecks is true; the env cannot disable it.
 	OCSPFailOpen OCSPFailOpenMode
-	// DisableTelemetry keeps in-band telemetry off even when the server enables it. The
-	// server ignores CLIENT_TELEMETRY_ENABLED=false sent as a login session parameter.
+	// DisableTelemetry turns off in-band telemetry for this connection. Telemetry is sent only
+	// when this is false and the server enables it through CLIENT_TELEMETRY_ENABLED.
 	DisableTelemetry bool
 
 	Token                  string        // Token to use for OAuth other forms of token based auth
